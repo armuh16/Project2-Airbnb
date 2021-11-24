@@ -1,4 +1,4 @@
-# Restful API Project1 Group 3 E-Commerces
+# Restful API Project2 Airbnb
 
 [![Go.Dev reference](https://img.shields.io/badge/gorm-reference-blue?logo=go&logoColor=blue)](https://pkg.go.dev/gorm.io/gorm?tab=doc)
 [![Go.Dev reference](https://img.shields.io/badge/echo-reference-blue?logo=go&logoColor=blue)](https://github.com/labstack/echo)
