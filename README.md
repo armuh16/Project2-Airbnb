@@ -129,6 +129,6 @@ $ go run main.go
 
 # Credits
 
-1. https://github.com/alfynf
+1. https://github.com/alfiancikoa
 2. https://github.com/Nathannov24
 3. https://github.com/armuh16
