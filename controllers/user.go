@@ -75,10 +75,17 @@ func DeleteUserController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("bad request"))
 	}
-	_, error := database.DeleteUser(id)
-	if error != nil {
+
+	loginuser := middlewares.ExtractTokenUserId(c)
+	if loginuser != id {
+		return c.JSON(http.StatusUnauthorized, responses.StatusUnauthorized())
+	}
+
+	_, e := database.DeleteUser(id)
+	if e != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusFailed("internal service error"))
 	}
+
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success delete user"))
 }
 
@@ -89,9 +96,16 @@ func UpdateUserController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("bad request"))
 	}
-	_, e := database.UpdateUser(id, user)
-	if e != nil {
+
+	loginuser := middlewares.ExtractTokenUserId(c)
+	if loginuser != id {
 		return c.JSON(http.StatusUnauthorized, responses.StatusUnauthorized())
 	}
+
+	_, e := database.UpdateUser(id, user)
+	if e != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailed("internail service error"))
+	}
+
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success update user"))
 }
