@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
+type Users struct {
 	ID          int    `gorm:"primarykey"`
 	Name        string `gorm:"type:varchar(255)" json:"name" form:"name"`
 	Email       string `gorm:"type:varchar(100);unique;not null" json:"email" form:"email"`
@@ -14,7 +14,20 @@ type User struct {
 	PhoneNumber string `gorm:"type:varchar(20);not null" json:"phonenumber" form:"phonenumber"`
 	Gender      string `gorm:"type:enum('male','female');" json:"gender" form:"gender"`
 	Token       string `gorm:"type:longtext;" json:"token" form:"token"`
+	Role        string `gorm:"type:varchar(100);" json:"" form:""`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
+}
+
+type UserLogin struct {
+	Email    string `json:"email" form:"email"`
+	Password string `json:"password" form:"password"`
+}
+
+type GetUserResponse struct {
+	Name        string
+	Email       string
+	PhoneNumber string
+	Gender      string
 }
