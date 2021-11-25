@@ -19,6 +19,7 @@ type Homestay struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	Booking     []Booking      `gorm:"foreignKey:Homestay_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type PostHomestay struct {
