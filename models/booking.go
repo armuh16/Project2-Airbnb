@@ -18,5 +18,5 @@ type Booking struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	DeletedAt      gorm.DeletedAt `gorm:"index"`
-	Payment        []Payment      `gorm:"foreignKey:Payment_ID;references:Payment.ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Payment        Payment        `gorm:"foreignKey:Payment_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
