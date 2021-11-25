@@ -9,6 +9,15 @@ func StatusFailed(message string) map[string]interface{} {
 	return result
 }
 
+// Fungsi untuk memberikan respon ketika Database gagal dijalankan
+func StatusInternalServerError() map[string]interface{} {
+	var result = map[string]interface{}{
+		"status":  "failed",
+		"message": "internal server error",
+	}
+	return result
+}
+
 // Fungsi untuk memberikan respon ketika controller service error dijalankan
 func StatusFailedInternal(message string, data interface{}) map[string]interface{} {
 	var result = map[string]interface{}{
