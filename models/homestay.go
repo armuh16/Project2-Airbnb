@@ -11,7 +11,7 @@ type Homestay struct {
 	Name        string  `gorm:"type:varchar(255);not null" json:"name" form:"name"`
 	Type        string  `gorm:"type:varchar(100);not null" json:"type" form:"type"`
 	Description string  `gorm:"type:varchar(255);not null" json:"description" form:"description"`
-	Status      string  `gorm:"type:varchar(255);not null" json:"status" form:"status"`
+	Status      string  `gorm:"type:varchar(255);default:'available';not null" json:"status" form:"status"`
 	Price       int     `gorm:"type:int;not null" json:"price" form:"price"`
 	Latitude    float64 `gorm:"type:decimal(5,2);not null" json:"latitude" form:"latitude"`
 	Longitude   float64 `gorm:"type:decimal(5,2);not null" json:"longitude" form:"longitude"`
@@ -21,11 +21,12 @@ type Homestay struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
-type PostHomestay struct {
-	Name        string  `json:"name" form:"name"`
-	Type        string  `json:"type" form:"type"`
-	Description string  `json:"description" form:"description"`
-	Price       int     `json:"price" form:"price"`
-	Latitude    float64 `json:"latitude" form:"latitude"`
-	Longitude   float64 `json:"longitude" form:"longitude"`
+type HomeStayRespon struct {
+	ID          int
+	Name        string
+	Type        string
+	Description string
+	Price       int
+	Latitude    float64
+	Longitude   float64
 }
