@@ -56,7 +56,7 @@ func GetHomeStayFilterController(c echo.Context) error {
 func GetHomeStayDetailController(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadGateway, responses.StatusFailed("invalid method"))
+		return c.JSON(http.StatusBadRequest, responses.StatusFailed("invalid method"))
 	}
 	homestay, err := database.GetHomeStayDetail(id)
 	if err != nil {
@@ -71,12 +71,12 @@ func GetHomeStayDetailController(c echo.Context) error {
 func UpdateHomeStayController(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadGateway, responses.StatusFailed("invalid method"))
+		return c.JSON(http.StatusBadRequest, responses.StatusFailed("invalid method"))
 	}
 	homeRequest := models.HomeStayRespon{}
 	user_id := middlewares.ExtractTokenUserId(c)
 	if err := c.Bind(&homeRequest); err != nil {
-		return c.JSON(http.StatusBadGateway, responses.StatusFailed("bad request"))
+		return c.JSON(http.StatusBadRequest, responses.StatusFailed("bad request"))
 	}
 	respon, err := database.EditHomestay(&homeRequest, id, user_id)
 	if err != nil {
@@ -91,7 +91,7 @@ func UpdateHomeStayController(c echo.Context) error {
 func DeleteHomeStayController(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadGateway, responses.StatusFailed("invalid method"))
+		return c.JSON(http.StatusBadRequest, responses.StatusFailed("invalid method"))
 	}
 	user_id := middlewares.ExtractTokenUserId(c)
 	respon, err := database.DeleteHomestay(id, user_id)
@@ -107,6 +107,14 @@ func DeleteHomeStayController(c echo.Context) error {
 func CreateHomestayControllerTest() echo.HandlerFunc {
 	return CreateHomestayController
 }
+
 func GetMyHomestayControllerTest() echo.HandlerFunc {
 	return GetMyHomestayController
+}
+
+func UpdateHomeStayControllerTest() echo.HandlerFunc {
+	return UpdateHomeStayController
+}
+func DeleteHomeStayControllerTest() echo.HandlerFunc {
+	return DeleteHomeStayController
 }

@@ -399,7 +399,7 @@ func TestGetHomestayDetailFailed(t *testing.T) {
 	e := InitEchoTestAPI()
 	InsertMockDataUserToDB()
 	InsertMockDataHomestayToDB()
-	t.Run("TestGETHomestayDetail_InvalidID", func(t *testing.T) {
+	t.Run("TestGETHomestayDetail_InvalidMethod", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/homestays/:id", nil)
 		rec := httptest.NewRecorder()
 		context := e.NewContext(req, rec)
@@ -413,7 +413,7 @@ func TestGetHomestayDetailFailed(t *testing.T) {
 			if err != nil {
 				assert.Error(t, err, "error")
 			}
-			assert.Equal(t, http.StatusBadGateway, rec.Code)
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
 			assert.Equal(t, "invalid method", homestay.Message)
 			assert.Equal(t, "failed", homestay.Status)
 		}
@@ -457,4 +457,267 @@ func TestGetHomestayDetailFailed(t *testing.T) {
 			assert.Equal(t, "failed", homestay.Status)
 		}
 	})
+}
+
+func TestUpdateHomestaySuccess(t *testing.T) {
+	e := InitEchoTestAPI()
+	InsertMockDataUserToDB()
+	InsertMockDataHomestayToDB()
+	var newdata = models.HomeStayRespon{
+		Name:        "villa mutiara edited",
+		Type:        "villa",
+		Description: "ini desc",
+		Price:       1000,
+		Latitude:    6.02,
+		Longitude:   10.88,
+	}
+	newbody, err := json.Marshal(newdata)
+	if err != nil {
+		t.Error(t, err, "error marshal")
+	}
+	var userDetail models.Users
+	tx := config.DB.Where("email = ? AND password = ?", logininfo.Email, xpass).First(&userDetail)
+	if tx.Error != nil {
+		t.Error(tx.Error)
+	}
+	token, err := middlewares.CreateToken(int(userDetail.ID))
+	if err != nil {
+		panic(err)
+	}
+	req := httptest.NewRequest(http.MethodPut, "/homestays/:id", bytes.NewBuffer(newbody))
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath("/homestays/:id")
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constants.SECRET_JWT))(UpdateHomeStayControllerTest())(context)
+	var homestay SingleHomestayResponseSuccess
+	body := res.Body.String()
+	json.Unmarshal([]byte(body), &homestay)
+	assert.Equal(t, http.StatusOK, res.Code)
+	assert.Equal(t, "success edit homestay", homestay.Message)
+	assert.Equal(t, "success", homestay.Status)
+}
+func TestUpdateHomestayFailed(t *testing.T) {
+	e := InitEchoTestAPI()
+	InsertMockDataUserToDB()
+	InsertMockDataHomestayToDB()
+	var newdata = models.HomeStayRespon{
+		Name:        "villa mutiara edited",
+		Type:        "villa",
+		Description: "ini desc",
+		Price:       1000,
+		Latitude:    6.02,
+		Longitude:   10.88,
+	}
+	newbody, err := json.Marshal(newdata)
+	if err != nil {
+		t.Error(t, err, "error marshal")
+	}
+	var userDetail models.Users
+	tx := config.DB.Where("email = ? AND password = ?", logininfo.Email, xpass).First(&userDetail)
+	if tx.Error != nil {
+		t.Error(tx.Error)
+	}
+	token, err := middlewares.CreateToken(int(userDetail.ID))
+	if err != nil {
+		panic(err)
+	}
+	t.Run("TestEdiHomestayDetail_InvalidID", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPut, "/homestays/:id", bytes.NewBuffer(newbody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		context := e.NewContext(req, res)
+		context.SetPath("/homestays/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("2")
+		middleware.JWT([]byte(constants.SECRET_JWT))(UpdateHomeStayControllerTest())(context)
+		var homestay SingleHomestayResponseSuccess
+		body := res.Body.String()
+		json.Unmarshal([]byte(body), &homestay)
+		assert.Equal(t, http.StatusNotFound, res.Code)
+		assert.Equal(t, "data not found", homestay.Message)
+		assert.Equal(t, "failed", homestay.Status)
+	})
+	t.Run("TestEdiHomestayDetail_InvalidMethod", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPut, "/homestays/:id", bytes.NewBuffer(newbody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		context := e.NewContext(req, res)
+		context.SetPath("/homestays/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("#")
+		middleware.JWT([]byte(constants.SECRET_JWT))(UpdateHomeStayControllerTest())(context)
+		var homestay SingleHomestayResponseSuccess
+		body := res.Body.String()
+		json.Unmarshal([]byte(body), &homestay)
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, "invalid method", homestay.Message)
+		assert.Equal(t, "failed", homestay.Status)
+	})
+	t.Run("TestEdiHomestayDetail_ErrorBind", func(t *testing.T) {
+		newbody, err := json.Marshal(PostHomeStayErr{})
+		if err != nil {
+			t.Error(t, err, "error marshal")
+		}
+		req := httptest.NewRequest(http.MethodPut, "/homestays/:id", bytes.NewBuffer(newbody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		context := e.NewContext(req, res)
+		context.SetPath("/homestays/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
+		middleware.JWT([]byte(constants.SECRET_JWT))(UpdateHomeStayControllerTest())(context)
+		var homestay SingleHomestayResponseSuccess
+		body := res.Body.String()
+		json.Unmarshal([]byte(body), &homestay)
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, "bad request", homestay.Message)
+		assert.Equal(t, "failed", homestay.Status)
+	})
+	t.Run("TestEdiHomestayDetail_ErrorDB", func(t *testing.T) {
+		newbody, err := json.Marshal(newdata)
+		if err != nil {
+			t.Error(t, err, "error marshal")
+		}
+		req := httptest.NewRequest(http.MethodPut, "/homestays/:id", bytes.NewBuffer(newbody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		context := e.NewContext(req, res)
+		context.SetPath("/homestays/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
+		config.DB.Migrator().DropTable(&models.Homestay{})
+		middleware.JWT([]byte(constants.SECRET_JWT))(UpdateHomeStayControllerTest())(context)
+		var homestay SingleHomestayResponseSuccess
+		body := res.Body.String()
+		json.Unmarshal([]byte(body), &homestay)
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+		assert.Equal(t, "internal server error", homestay.Message)
+		assert.Equal(t, "failed", homestay.Status)
+	})
+}
+func TestDeleteHomestaySuccess(t *testing.T) {
+	e := InitEchoTestAPI()
+	InsertMockDataUserToDB()
+	InsertMockDataHomestayToDB()
+	var userDetail models.Users
+	tx := config.DB.Where("email = ? AND password = ?", logininfo.Email, xpass).First(&userDetail)
+	if tx.Error != nil {
+		t.Error(tx.Error)
+	}
+	token, err := middlewares.CreateToken(int(userDetail.ID))
+	if err != nil {
+		panic(err)
+	}
+	req := httptest.NewRequest(http.MethodPut, "/homestays/:id", nil)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath("/homestays/:id")
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constants.SECRET_JWT))(DeleteHomeStayControllerTest())(context)
+	var homestay SingleHomestayResponseSuccess
+	body := res.Body.String()
+	json.Unmarshal([]byte(body), &homestay)
+	assert.Equal(t, http.StatusOK, res.Code)
+	assert.Equal(t, "success delete homestay", homestay.Message)
+	assert.Equal(t, "success", homestay.Status)
+}
+func TestDeleteHomestayFailed(t *testing.T) {
+	e := InitEchoTestAPI()
+	t.Run("TestDeleteHomestay_InvalidID", func(t *testing.T) {
+		InsertMockDataUserToDB()
+		InsertMockDataHomestayToDB()
+		var userDetail models.Users
+		tx := config.DB.Where("email = ? AND password = ?", logininfo.Email, xpass).First(&userDetail)
+		if tx.Error != nil {
+			t.Error(tx.Error)
+		}
+		token, err := middlewares.CreateToken(int(userDetail.ID))
+		if err != nil {
+			panic(err)
+		}
+		req := httptest.NewRequest(http.MethodPut, "/homestays/:id", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		context := e.NewContext(req, res)
+		context.SetPath("/homestays/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("2")
+		middleware.JWT([]byte(constants.SECRET_JWT))(DeleteHomeStayControllerTest())(context)
+		var homestay SingleHomestayResponseSuccess
+		body := res.Body.String()
+		json.Unmarshal([]byte(body), &homestay)
+		assert.Equal(t, http.StatusNotFound, res.Code)
+		assert.Equal(t, "data not found", homestay.Message)
+		assert.Equal(t, "failed", homestay.Status)
+	})
+	t.Run("TestDeleteHomestay_InvalidMethod", func(t *testing.T) {
+		InsertMockDataUserToDB()
+		InsertMockDataHomestayToDB()
+		var userDetail models.Users
+		tx := config.DB.Where("email = ? AND password = ?", logininfo.Email, xpass).First(&userDetail)
+		if tx.Error != nil {
+			t.Error(tx.Error)
+		}
+		token, err := middlewares.CreateToken(int(userDetail.ID))
+		if err != nil {
+			panic(err)
+		}
+		req := httptest.NewRequest(http.MethodPut, "/homestays/:id", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		context := e.NewContext(req, res)
+		context.SetPath("/homestays/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("#")
+		middleware.JWT([]byte(constants.SECRET_JWT))(DeleteHomeStayControllerTest())(context)
+		var homestay SingleHomestayResponseSuccess
+		body := res.Body.String()
+		json.Unmarshal([]byte(body), &homestay)
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, "invalid method", homestay.Message)
+		assert.Equal(t, "failed", homestay.Status)
+	})
+	t.Run("TestDeleteHomestay_ErrorDB", func(t *testing.T) {
+		InsertMockDataUserToDB()
+		InsertMockDataHomestayToDB()
+		var userDetail models.Users
+		tx := config.DB.Where("email = ? AND password = ?", logininfo.Email, xpass).First(&userDetail)
+		if tx.Error != nil {
+			t.Error(tx.Error)
+		}
+		token, err := middlewares.CreateToken(int(userDetail.ID))
+		if err != nil {
+			panic(err)
+		}
+		req := httptest.NewRequest(http.MethodPut, "/homestays/:id", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		res := httptest.NewRecorder()
+		context := e.NewContext(req, res)
+		context.SetPath("/homestays/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
+		config.DB.Migrator().DropTable(&models.Homestay{})
+		middleware.JWT([]byte(constants.SECRET_JWT))(DeleteHomeStayControllerTest())(context)
+		var homestay SingleHomestayResponseSuccess
+		body := res.Body.String()
+		json.Unmarshal([]byte(body), &homestay)
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+		assert.Equal(t, "internal server error", homestay.Message)
+		assert.Equal(t, "failed", homestay.Status)
+	})
+
 }
