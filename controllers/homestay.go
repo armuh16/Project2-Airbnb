@@ -103,3 +103,10 @@ func DeleteHomeStayController(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success delete homestay"))
 }
+
+func CreateHomestayControllerTest() echo.HandlerFunc {
+	return CreateHomestayController
+}
+func GetMyHomestayControllerTest() echo.HandlerFunc {
+	return GetMyHomestayController
+}

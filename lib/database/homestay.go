@@ -56,7 +56,7 @@ func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 	return homestay, nil
 }
 
-func GetAllHomeStay() (interface{}, error) {
+func GetAllHomeStay() ([]models.HomeStayRespon, error) {
 	homestays := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
 		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.latitude, homestays.longitude").
