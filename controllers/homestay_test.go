@@ -63,8 +63,7 @@ var (
 		Type:        "villa",
 		Description: "ini desc",
 		Price:       1000,
-		Latitude:    6.02,
-		Longitude:   10.88,
+		Address:     "indonesia",
 		User_ID:     1,
 	}
 )
