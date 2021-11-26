@@ -3,6 +3,7 @@ package database
 import (
 	"alta/airbnb/config"
 	"alta/airbnb/models"
+	"alta/airbnb/util"
 )
 
 func InsertHomestay(homestay models.Homestay, user_id int) (*models.Homestay, error) {
@@ -14,6 +15,12 @@ func InsertHomestay(homestay models.Homestay, user_id int) (*models.Homestay, er
 	if tx.RowsAffected > 0 {
 		return nil, nil
 	}
+	lat, lng, e := util.GetGeocodeLocations(homestay.Address)
+	if e != nil {
+		return nil, e
+	}
+	homestay.Latitude = lat
+	homestay.Longitude = lng
 	if err := config.DB.Save(&homestay).Error; err != nil {
 		return nil, err
 	}
@@ -23,7 +30,7 @@ func InsertHomestay(homestay models.Homestay, user_id int) (*models.Homestay, er
 func GetHomeStayDetail(homestay_id int) (*models.HomeStayRespon, error) {
 	homestay := models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Where("homestays.deleted_at IS NULL and id=?", homestay_id).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -37,7 +44,7 @@ func GetHomeStayDetail(homestay_id int) (*models.HomeStayRespon, error) {
 func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Where("homestays.deleted_at IS NULL and type=?", tipe).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -48,7 +55,7 @@ func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Where("homestays.deleted_at IS NULL and user_id=?", user_id).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -59,7 +66,7 @@ func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 func GetAllHomeStay() ([]models.HomeStayRespon, error) {
 	homestays := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Where("homestays.deleted_at IS NULL").Find(&homestays)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -73,12 +80,16 @@ func EditHomestay(homerequest *models.HomeStayRespon, id int, user_id int) (*mod
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
+	lat, lng, e := util.GetGeocodeLocations(homestay.Address)
+	if e != nil {
+		return nil, e
+	}
 	homestay.Name = homerequest.Name
 	homestay.Type = homerequest.Type
 	homestay.Description = homerequest.Description
 	homestay.Price = homerequest.Price
-	homestay.Latitude = homerequest.Latitude
-	homestay.Longitude = homerequest.Longitude
+	homestay.Latitude = lat
+	homestay.Longitude = lng
 	if tx.RowsAffected > 0 {
 		if err := config.DB.Save(&homestay).Error; err != nil {
 			return nil, err
