@@ -16,6 +16,7 @@ type Users struct {
 	Token       string     `gorm:"type:longtext;" json:"token" form:"token"`
 	Role        string     `gorm:"type:varchar(100);" json:"" form:""`
 	Homestays   []Homestay `gorm:"foreignKey:User_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Bookings    []Booking  `gorm:"foreignKey:User_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
