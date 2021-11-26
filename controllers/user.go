@@ -109,3 +109,18 @@ func UpdateUserController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success update user"))
 }
+
+// Testing Get User
+func GetUserByIdControllerTesting() echo.HandlerFunc {
+	return GetUsersController
+}
+
+// Testing Edit User
+func UpdateUserControllerTesting() echo.HandlerFunc {
+	return UpdateUserController
+}
+
+// Testing Detele User
+func DeleteUserControllerTesting() echo.HandlerFunc {
+	return DeleteUserController
+}

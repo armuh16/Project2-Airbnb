@@ -44,3 +44,19 @@ func InitDB() {
 func InitalMigration() {
 	DB.AutoMigrate(&models.Users{})
 }
+
+func InitDBTest() {
+	// Sesuaikan dengan database kalian
+	connect := "root:yourpasswd@tcp(localhost:3306)/usertesting?charset=utf8&parseTime=True&loc=Local"
+	var err error
+	DB, err = gorm.Open(mysql.Open(connect), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	InitalMigrationtest()
+}
+
+func InitalMigrationtest() {
+	DB.Migrator().DropTable(&models.Users{})
+	DB.AutoMigrate(&models.Users{})
+}
