@@ -1,6 +1,7 @@
 package util
 
 import (
+	"alta/airbnb/config"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,9 +11,8 @@ import (
 
 // function untuk generate latitude, longitude menggunakan api geocode (google)
 func GetGeocodeLocations(alamat string) (float64, float64, error) {
-	//env := config.GetConfig()
-	// apikey := env["APIKEYS"]
-	apikey := "AIzaSyA2bPtM1CYSyCpDEAzXj6SHZQDnHNvqSsY"
+	env := config.GetConfig()
+	apikey := env["APIKEYS"]
 	location := strings.ReplaceAll(alamat, " ", "+")
 	url := fmt.Sprintf("https://maps.googleapis.com/maps/api/geocode/json?address=%v&key=%v", location, apikey)
 	response, err := http.Get(url)
