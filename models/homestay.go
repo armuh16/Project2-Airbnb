@@ -16,9 +16,10 @@ type Homestay struct {
 	Latitude    float64 `gorm:"type:decimal(5,2);not null" json:"latitude" form:"latitude"`
 	Longitude   float64 `gorm:"type:decimal(5,2);not null" json:"longitude" form:"longitude"`
 	User_ID     int
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	// Features     []*Feature `gorm:"many2many:feature_homestays;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type HomeStayRespon struct {
