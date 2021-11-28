@@ -17,12 +17,33 @@ type Homestay struct {
 	Latitude    float64 `gorm:"not null" json:"latitude" form:"latitude"`
 	Longitude   float64 `gorm:"not null" json:"longitude" form:"longitude"`
 	User_ID     int
+	Facilities  []Facility `gorm:"foreignKey:Homestay_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	// Features     []*Feature `gorm:"many2many:feature_homestays;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
+type PostHomestayRequest struct {
+	Name        string `json:"name" form:"name"`
+	Type        string `json:"type" form:"type"`
+	Description string `json:"description" form:"description"`
+	Facility    []int  `json:"facility" form:"facility"`
+	Price       int    `json:"price" form:"price"`
+	Address     string `json:"address" form:"address"`
+}
+
+type HomeStayResponDetail struct {
+	ID          int
+	Name        string
+	Type        string
+	Description string
+	Price       int
+	Address     string
+	Latitude    float64
+	Longitude   float64
+	Features    []string
+}
 type HomeStayRespon struct {
 	ID          int
 	Name        string
