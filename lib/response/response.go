@@ -1,5 +1,7 @@
 package responses
 
+import "net/http"
+
 // Fungsi untuk memberikan respon ketika controller gagal dijalankan
 func StatusFailed(message string) map[string]interface{} {
 	var result = map[string]interface{}{
@@ -51,6 +53,15 @@ func StatusSuccessData(message string, data interface{}) map[string]interface{} 
 		"status":  "success",
 		"message": message,
 		"data":    data,
+	}
+	return result
+}
+
+// function response false param
+func FalseParamResponse() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "False Param",
 	}
 	return result
 }
