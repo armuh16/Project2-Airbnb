@@ -5,6 +5,7 @@ import (
 	responses "alta/airbnb/lib/response"
 	"alta/airbnb/middlewares"
 	"alta/airbnb/models"
+	"alta/airbnb/util"
 	"net/http"
 	"strconv"
 
@@ -13,9 +14,22 @@ import (
 
 func CreateHomestayController(c echo.Context) error {
 	user_id := middlewares.ExtractTokenUserId(c)
-	homestay := models.Homestay{}
-	if err := c.Bind(&homestay); err != nil {
+	newHomestay := models.PostHomestayRequest{}
+	if err := c.Bind(&newHomestay); err != nil {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("status bad request"))
+	}
+	lat, lng, e := util.GetGeocodeLocations(newHomestay.Address)
+	if e != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailed("cannot generate the address"))
+	}
+	homestay := models.Homestay{
+		Name:        newHomestay.Name,
+		Type:        newHomestay.Type,
+		Description: newHomestay.Description,
+		Price:       newHomestay.Price,
+		Address:     newHomestay.Address,
+		Latitude:    lat,
+		Longitude:   lng,
 	}
 	respon, err := database.InsertHomestay(homestay, user_id)
 	if err != nil {
@@ -23,6 +37,10 @@ func CreateHomestayController(c echo.Context) error {
 	}
 	if respon == nil {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("data is already exist"))
+	} else {
+		if _, err := database.InsertFasilities(newHomestay.Facility, respon.ID); err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+		}
 	}
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success create new homestay"))
 }
@@ -44,9 +62,18 @@ func GetMyHomestayController(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.StatusSuccessData("success get homestay", homestays))
 }
 
-func GetHomeStayFilterController(c echo.Context) error {
+func GetHomeStayFilterTypeController(c echo.Context) error {
 	request := c.Param("type")
 	homestays, err := database.GetHomeStayByType(request)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+	}
+	return c.JSON(http.StatusOK, responses.StatusSuccessData("success get homestay", homestays))
+}
+
+func GetHomeStayFilterFeatureController(c echo.Context) error {
+	request := c.Param("type")
+	homestays, err := database.GetHomeStayByFacility(request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 	}
