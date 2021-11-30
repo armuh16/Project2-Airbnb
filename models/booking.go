@@ -7,16 +7,25 @@ import (
 )
 
 type Booking struct {
-	ID             int `gorm:"primarykey"`
-	User_ID        int
-	Homestay_ID    int
-	Payment_ID     int
-	CheckIn        string `gorm:"type:date;not null" json:"checkin" form:"checkin"`
-	CheckOut       string `gorm:"type:date;not null" json:"checkout" form:"checkout"`
-	Total_Price    int    `gorm:"type:int;not null" json:"totalprice" form:"totalprice"`
-	Status_Payment string `gorm:"type:varchar(100);not null" json:"statuspayment" form:"statuspayment"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	DeletedAt      gorm.DeletedAt `gorm:"index"`
-	Payment        Payment        `gorm:"foreignKey:Payment_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ID          int    `gorm:"primarykey;AUTO_INCREMENT"`
+	User_ID     int    `json:"userid" form:"userid"`
+	Homestay_ID int    `json:"homestayid" form:"homestayid"`
+	CheckIn     string `gorm:"type:datetime;not null" json:"checkin" form:"checkin"`
+	CheckOut    string `gorm:"type:datetime;not null" json:"checkout" form:"checkout"`
+	LongStay    int    `json:"longstay" form:"longstay"`
+	Total_Price int    `json:"totalprice" form:"totalprice"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
+}
+
+type BodyCheckIn struct {
+	Homestay_ID int    `json:"homestayid" form:"homestayid"`
+	CheckIn     string `json:"checkin" form:"checkin"`
+	CheckOut    string `json:"checkout" form:"checkout"`
+}
+
+type ReservationDate struct {
+	CheckIn  time.Time
+	CheckOut time.Time
 }

@@ -35,6 +35,14 @@ func New() *echo.Echo {
 	r.POST("/homestays", controllers.CreateHomestayController)
 	r.PUT("/homestays/:id", controllers.UpdateHomeStayController)
 	r.DELETE("/homestays/:id", controllers.DeleteHomeStayController)
+	// ------------------------------------------------------------------
+	// HOMESTAY BOOKING
+	// ------------------------------------------------------------------
+	r.POST("/reservations", controllers.CreateBookingController)
+	r.GET("/reservations", controllers.GetBookingControllers)
+	r.DELETE("/reservations/:id", controllers.CancelBookingController)
+	// e.POST("/reservations/check/", controllers.RoomReservationCheck)
+	e.POST("/reservations/check/", controllers.CekReservationControllers)
 
 	return e
 }
