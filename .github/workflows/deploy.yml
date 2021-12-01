@@ -22,4 +22,4 @@ jobs:
           docker stop airbnb-app
           docker rm airbnb-app
           docker build -t airbnb-app:latest .
-          docker run -d -p 80:8000 --name airbnb airbnb-app:latest
+          docker run -d -p 80:8000 --name airbnb-app airbnb-app:latest
