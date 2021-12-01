@@ -3,6 +3,8 @@
 [![Go.Dev reference](https://img.shields.io/badge/gorm-reference-blue?logo=go&logoColor=blue)](https://pkg.go.dev/gorm.io/gorm?tab=doc)
 [![Go.Dev reference](https://img.shields.io/badge/echo-reference-blue?logo=go&logoColor=blue)](https://github.com/labstack/echo)
 
+<br>
+<br>
 
 # Table of Content
 
@@ -13,16 +15,29 @@
 - [Endpoints](#endpoints)
 - [Credits](#credits)
 
+<br>
+<br>
+
 
 # Description
 
 Project Base task Alterra Academy ini dibuat untuk mengimplementasikan SCRUM method using GO Language STRUCTURING , ECHO , JWT , API. 
+
+
+<br>
+<br>
+
 
 # Requirements
 
 * Visual Studio Code
 * Postman
 * Mysql Workbench
+
+
+<br>
+<br>
+
 
 # How to use
 - Install Go, Postman, MySQL Workbench
@@ -39,12 +54,17 @@ $ go run main.go
 * Open Postman run with your local host, follow the routes in Visual Studio Code folder.
 
 
+<br>
+<br>
+
 # Our Feature
 * CREATE : User, Homestays, Reservations
 * READ : User, Homestays, Reservations
 * UPDATE User, Homestays
 * DELETE : User, Homestays, Reservations
 
+<br>
+<br>
 
 # Endpoints
 
