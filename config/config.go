@@ -48,4 +48,5 @@ func InitalMigration() {
 	DB.AutoMigrate(&models.Facility{})
 	DB.AutoMigrate(&models.Payment{})
 	DB.AutoMigrate(&models.Booking{})
+	DB.AutoMigrate(&models.Calendar{})
 }
