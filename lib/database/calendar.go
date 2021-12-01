@@ -22,7 +22,7 @@ func InsertDateToCalendar(homestay_id int, booking_id int) ([]models.Calendar, e
 	now := time.Now()
 	interval := bookInfo.CheckIn.Sub(now)
 	intervalInt := int(interval.Hours() / 24)
-	if now.Hour() >= 12 {
+	if now.Hour() >= 12 && interval.Hours() >= 12 {
 		intervalInt = intervalInt + 1
 	}
 	if bookInfo.LongStay == 0 {
@@ -63,7 +63,7 @@ func CheckAvailability(request models.BodyCheckIn) int64 {
 	interval := checkIn.Sub(now)
 	longstayInt := int(longstay.Hours() / 24)
 	intervalInt := int(interval.Hours() / 24)
-	if now.Hour() >= 12 {
+	if now.Hour() >= 12 && interval.Hours() >= 12 {
 		intervalInt = intervalInt + 1
 	}
 	for i := 0; i < longstayInt; i++ {
