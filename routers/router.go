@@ -3,13 +3,25 @@ package routers
 import (
 	"alta/airbnb/constants"
 	"alta/airbnb/controllers"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	echoMid "github.com/labstack/echo/v4/middleware"
 )
 
 func New() *echo.Echo {
 	e := echo.New()
+
+	//CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodPut,
+			http.MethodPost,
+			http.MethodDelete},
+	}))
 	// ------------------------------------------------------------------
 	// LOGIN & REGISTER USER
 	// ------------------------------------------------------------------
