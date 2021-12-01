@@ -16,7 +16,7 @@ func CreateBooking(booking *models.Booking) (*models.Booking, error) {
 }
 
 // Fungsi untuk menambahkan tanggal checkout pada reservasi yang dibuat
-func AddCheckOut(checkIn, checkOut time.Time, idBooking int) {
+func AddLongstay(checkIn, checkOut time.Time, idBooking int) {
 	config.DB.Exec("UPDATE bookings SET long_stay = DATEDIFF(?, ?) WHERE id = ?", checkOut, checkIn, idBooking)
 }
 
@@ -62,56 +62,4 @@ func RoomReservationList(id int) ([]models.ReservationDate, error) {
 		return nil, tx.Error
 	}
 	return dates, nil
-}
-
-func CekStatusReservation(id_home int, check_in, check_out string) (interface{}, error) {
-	var check []models.Booking
-	var hasil string
-
-	if CekTimeBefore(check_in, check_out) == true {
-		err := config.DB.Table("bookings").Select("*").Where("bookings.homestay_id = ?", id_home).Find(&check)
-		if err.Error != nil {
-			return 0, err.Error
-		} else if err.RowsAffected == 0 {
-			return 1, nil
-		}
-
-		for i, _ := range check {
-			hasil = SearchAvailableDay(check[i].CheckIn, check[i].CheckOut, check_in, check_out)
-			if hasil == "Not Available" {
-				break
-			}
-		}
-		return hasil, nil
-	}
-	return 0, nil
-}
-
-func SearchAvailableDay(in, out, check_in, check_out string) string {
-	format := "2006-01-02"
-
-	check_start, _ := time.Parse(format, check_in)
-	check_end, _ := time.Parse(format, check_out)
-	start, _ := time.Parse(format, in)
-	end, _ := time.Parse(format, out)
-
-	hasil := "Available"
-	if (start.Before(check_start) && end.After(check_start)) || (start.Before(check_end) && end.After(check_end)) {
-		hasil = "Not Available"
-		return hasil
-	} else if start.Equal(check_start) || end.Equal(check_start) || start.Equal(check_end) || end.Equal(check_end) {
-		hasil = "Not Available"
-		return hasil
-	}
-	return hasil
-}
-
-func CekTimeBefore(check_start, check_end string) bool {
-	format := "2006-01-02"
-	start, _ := time.Parse(format, check_start)
-	end, _ := time.Parse(format, check_end)
-	if start.Before(end) && time.Now().Before(start) {
-		return true
-	}
-	return false
 }
