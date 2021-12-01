@@ -4,7 +4,6 @@
 [![Go.Dev reference](https://img.shields.io/badge/echo-reference-blue?logo=go&logoColor=blue)](https://github.com/labstack/echo)
 
 <br>
-<br>
 
 # Table of Content
 
@@ -16,15 +15,12 @@
 - [Credits](#credits)
 
 <br>
-<br>
 
 
 # Description
 
 Project Base task Alterra Academy ini dibuat untuk mengimplementasikan SCRUM method using GO Language STRUCTURING , ECHO , JWT , API. 
 
-
-<br>
 <br>
 
 
@@ -35,7 +31,6 @@ Project Base task Alterra Academy ini dibuat untuk mengimplementasikan SCRUM met
 * Mysql Workbench
 
 
-<br>
 <br>
 
 
@@ -54,7 +49,6 @@ $ go run main.go
 * Open Postman run with your local host, follow the routes in Visual Studio Code folder.
 
 
-<br>
 <br>
 
 # Our Feature
@@ -92,7 +86,7 @@ $ go run main.go
 | DELETE | /reservations/:id | Delete reservations by id reservations | Yes | Yes
 |---|---|---|---|---|
 
-<br>
+
 <br>
 
 
