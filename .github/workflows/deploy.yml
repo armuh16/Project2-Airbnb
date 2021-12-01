@@ -21,5 +21,5 @@ jobs:
           git pull origin main
           docker stop airbnb-app
           docker rm airbnb-app
-          docker build -t airbnb-app:latest .
-          docker run -d -p 80:8000 --name airbnb-app airbnb-app:latest
+          docker build -t airbnb:latest .
+          docker run -d -p 80:8000 --name airbnb-app airbnb:latest
