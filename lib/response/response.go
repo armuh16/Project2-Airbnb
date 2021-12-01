@@ -65,3 +65,39 @@ func FalseParamResponse() map[string]interface{} {
 	}
 	return result
 }
+
+// function response failed to reserve
+func FailedBook() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "Failed to Reserve",
+	}
+	return result
+}
+
+// function response Success to reserve
+func SuccessBook() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusOK,
+		"message": "Success to Reserve",
+	}
+	return result
+}
+
+// function response wrong id
+func WrongIdBook() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "Wrong Account",
+	}
+	return result
+}
+
+// function response Success to reserve
+func SuccessCancelBook() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusOK,
+		"message": "Success Cancel Reserve",
+	}
+	return result
+}

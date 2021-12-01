@@ -28,12 +28,12 @@ func CreateBookingController(c echo.Context) error {
 	input.User_ID = int(logged)
 	book, err := database.CreateBooking(&input)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, responses.StatusFailed("failed"))
+		return c.JSON(http.StatusBadRequest, responses.FailedBook())
 	}
 	database.AddLongstay(checkIn, checkOut, book.ID)
 	database.AddHargaToReservation(input.Homestay_ID, book.ID)
 	database.InsertDateToCalendar(book.Homestay_ID, book.ID)
-	return c.JSON(http.StatusOK, responses.StatusSuccess("success"))
+	return c.JSON(http.StatusOK, responses.SuccessBook())
 }
 
 func GetBookingControllers(c echo.Context) error {
@@ -43,11 +43,11 @@ func GetBookingControllers(c echo.Context) error {
 	}
 	userId, _ := database.GetReservationOwner(id)
 	if err != nil || userId == 0 {
-		return c.JSON(http.StatusBadRequest, responses.StatusFailed("failed"))
+		return c.JSON(http.StatusBadRequest, responses.StatusFailed("Failed to Get Data"))
 	}
 	logged := middlewares.ExtractTokenUserId(c)
 	if int(logged) != userId {
-		return c.JSON(http.StatusBadRequest, responses.StatusUnauthorized())
+		return c.JSON(http.StatusBadRequest, responses.WrongIdBook())
 	}
 	booking, _ := database.GetReservation(id)
 	return c.JSON(http.StatusOK, responses.StatusSuccessData("success", booking))
@@ -60,12 +60,12 @@ func CancelBookingController(c echo.Context) error {
 	}
 	userId, _ := database.GetReservationOwner(id)
 	if err != nil || userId == 0 {
-		return c.JSON(http.StatusBadRequest, responses.StatusFailed("failed"))
+		return c.JSON(http.StatusBadRequest, responses.StatusFailed("Failed to Get Data"))
 	}
 	logged := middlewares.ExtractTokenUserId(c)
 	if int(logged) != userId {
-		return c.JSON(http.StatusBadRequest, responses.StatusUnauthorized())
+		return c.JSON(http.StatusBadRequest, responses.WrongIdBook())
 	}
 	database.CancelReservation(id)
-	return c.JSON(http.StatusOK, responses.StatusSuccess("success"))
+	return c.JSON(http.StatusOK, responses.SuccessCancelBook())
 }
