@@ -9,6 +9,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.3 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/kelvins/geocoder v0.0.0-20200113010004-f579500e9e27 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/echo/v4 v4.6.1 // indirect
