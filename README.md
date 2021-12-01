@@ -40,8 +40,8 @@ Project Base task Alterra Academy ini dibuat untuk mengimplementasikan SCRUM met
 ```
 https://github.com/armuh16/Project2-Airbnb.git
 ```
-* CREATE DATABASE IF NOT EXISTS `project1_kelompok3`;
-* USE `project1_kelompok3`;
+* CREATE DATABASE IF NOT EXISTS `alta_airbnb`;
+* USE `alta_airbnb`;
 * Run `main.go`
 ```
 $ go run main.go
