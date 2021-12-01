@@ -42,5 +42,11 @@ func InitDB() {
 
 // Function Initial Migration (Tabel)
 func InitalMigration() {
-	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.Users{})
+	DB.AutoMigrate(&models.Homestay{})
+	DB.AutoMigrate(&models.Feature{})
+	DB.AutoMigrate(&models.Facility{})
+	DB.AutoMigrate(&models.Payment{})
+	DB.AutoMigrate(&models.Booking{})
+	DB.AutoMigrate(&models.Calendar{})
 }
