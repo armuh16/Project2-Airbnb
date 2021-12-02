@@ -46,6 +46,7 @@ func New() *echo.Echo {
 	// FACILITY
 	// ------------------------------------------------------------------
 	r.POST("/feature", controllers.InsertFeatureController)
+	r.GET("/feature/:id", controllers.GetFeatureController)
 
 	return e
 }
