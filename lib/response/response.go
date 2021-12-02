@@ -68,17 +68,6 @@ func FalseParamResponse() map[string]interface{} {
 	return result
 }
 
-func StatusSuccessLogin(message string, id, token, name interface{}) map[string]interface{} {
-	var result = map[string]interface{}{
-		"status":  "success",
-		"message": message,
-		"id":      id,
-		"token":   token,
-		"name":    name,
-	}
-	return result
-}
-
 // function response failed to reserve
 
 func FailedBook() map[string]interface{} {
@@ -112,6 +101,18 @@ func SuccessCancelBook() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusOK,
 		"message": "Success Cancel Reserve",
+	}
+	return result
+}
+
+// function response success to login with id display
+func StatusSuccessLogin(message string, id, token, name interface{}) map[string]interface{} {
+	var result = map[string]interface{}{
+		"status":  "success",
+		"message": message,
+		"id":      id,
+		"token":   token,
+		"name":    name,
 	}
 	return result
 }
