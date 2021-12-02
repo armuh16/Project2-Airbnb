@@ -23,3 +23,13 @@ func GetFeatureByName(Feature_name string) (int64, error) {
 	}
 	return 0, nil
 }
+
+// Fungsi untuk mendapatkan id feature
+func GetFeature(id int) (interface{}, error) {
+	var feature models.Feature
+	tx := config.DB.Where("id = ?", id).Find(&feature)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return nil, tx.Error
+	}
+	return feature, nil
+}

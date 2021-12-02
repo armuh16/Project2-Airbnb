@@ -5,6 +5,7 @@ import (
 	responses "alta/airbnb/lib/response"
 	"alta/airbnb/models"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -24,4 +25,16 @@ func InsertFeatureController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("failed to input feature"))
 	}
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success to input feature"))
+}
+
+func GetFeatureController(c echo.Context) error {
+	idFeature, e := strconv.Atoi(c.Param("id"))
+	if e != nil {
+		return c.JSON(http.StatusBadRequest, responses.FalseParamResponse())
+	}
+	feature, err := database.GetFeature(idFeature)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+	}
+	return c.JSON(http.StatusOK, responses.StatusSuccessData("success get feature", feature))
 }
