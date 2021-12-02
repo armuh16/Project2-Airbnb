@@ -39,7 +39,7 @@ func LoginUsersController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("bad request"))
 	}
-	return c.JSON(http.StatusOK, responses.StatusSuccessData("success login", users.Token))
+	return c.JSON(http.StatusOK, responses.StatusSuccessLogin("success login", users.ID, users.Token, users.Name))
 }
 
 //get user by id
