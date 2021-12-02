@@ -23,7 +23,12 @@ func InsertDateToCalendar(homestay_id int, booking_id int) ([]models.Calendar, e
 	dateCalendar := make([]models.Calendar, n)
 	now := time.Now()
 	intervalOut := int(bookInfo.CheckOut.Sub(now).Hours())
-	intervalDay := bookInfo.CheckIn.Day() - now.Day()
+	// intervalDay := bookInfo.CheckIn.Day() - now.Day()
+	intervalInt := int(bookInfo.CheckIn.Sub(now).Hours()) % 24
+	Day := int(bookInfo.CheckIn.Sub(now).Hours()) / 24
+	if intervalInt >= 14 {
+		Day++
+	}
 	// Ketika checkin dan checkout di hari yang sama, berlaku untuk yang reservasi subuh
 	if intervalOut <= 12 {
 		dateCalendar[0].Homestay_ID = homestay_id
@@ -32,8 +37,8 @@ func InsertDateToCalendar(homestay_id int, booking_id int) ([]models.Calendar, e
 	} else {
 		for i := 0; i < n; i++ {
 			dateCalendar[i].Homestay_ID = homestay_id
-			dateCalendar[i].DateIn = time.Now().AddDate(0, 0, intervalDay+i)
-			dateCalendar[i].DateOut = time.Now().AddDate(0, 0, intervalDay+i+1)
+			dateCalendar[i].DateIn = time.Now().AddDate(0, 0, Day+i)
+			dateCalendar[i].DateOut = time.Now().AddDate(0, 0, Day+i+1)
 		}
 	}
 	if err := config.DB.Create(&dateCalendar).Error; err != nil {
@@ -67,9 +72,14 @@ func CheckAvailability(request models.BodyCheckIn) int64 {
 
 	checkOut, _ := time.Parse(format, request.CheckOut+timeOut)
 	longstayInt := int(checkOut.Sub(checkIn).Hours() / 22)
-	intervalDay := checkIn.Day() - now.Day()
+	// intervalDay := checkIn.Day() - now.Day()
+	intervalInt := int(checkIn.Sub(now).Hours()) % 24
+	Day := int(checkIn.Sub(now).Hours()) / 24
+	if intervalInt >= 14 {
+		Day++
+	}
 	for i := 0; i < longstayInt; i++ {
-		date := time.Now().AddDate(0, 0, intervalDay+i)
+		date := time.Now().AddDate(0, 0, Day+i)
 		datef := date.Format("2006-01-02")
 		if row := CheckDate(request.Homestay_ID, datef); row > 0 {
 			return row
