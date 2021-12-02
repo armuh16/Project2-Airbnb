@@ -69,6 +69,7 @@ func FalseParamResponse() map[string]interface{} {
 }
 
 // function response failed to reserve
+
 func FailedBook() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusBadRequest,
