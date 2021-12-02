@@ -42,6 +42,10 @@ func New() *echo.Echo {
 	r.GET("/reservations", controllers.GetBookingControllers)
 	r.DELETE("/reservations/:id", controllers.CancelBookingController)
 	e.POST("/reservations/check", controllers.ReservationCheckController)
+	// ------------------------------------------------------------------
+	// FACILITY
+	// ------------------------------------------------------------------
+	r.POST("/feature", controllers.InsertFeatureController)
 
 	return e
 }
