@@ -1,6 +1,8 @@
 package responses
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // Fungsi untuk memberikan respon ketika controller gagal dijalankan
 func StatusFailed(message string) map[string]interface{} {
@@ -67,6 +69,7 @@ func FalseParamResponse() map[string]interface{} {
 }
 
 // function response failed to reserve
+
 func FailedBook() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusBadRequest,
@@ -98,6 +101,18 @@ func SuccessCancelBook() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusOK,
 		"message": "Success Cancel Reserve",
+	}
+	return result
+}
+
+// function response success to login with id display
+func StatusSuccessLogin(message string, id, token, name interface{}) map[string]interface{} {
+	var result = map[string]interface{}{
+		"status":  "success",
+		"message": message,
+		"id":      id,
+		"token":   token,
+		"name":    name,
 	}
 	return result
 }
