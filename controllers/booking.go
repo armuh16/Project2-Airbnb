@@ -16,9 +16,20 @@ import (
 func CreateBookingController(c echo.Context) error {
 	inputReq := models.BodyCheckIn{}
 	c.Bind(&inputReq)
-	format := "2006-01-02"
-	checkIn, _ := time.Parse(format, inputReq.CheckIn)
-	checkOut, _ := time.Parse(format, inputReq.CheckOut)
+	respon := database.CheckAvailability(inputReq)
+	if respon > 0 {
+		return c.JSON(http.StatusBadRequest, responses.StatusFailed("The request date is already booked"))
+	}
+	now := time.Now()
+	zona, _ := now.Zone()
+	format := "2006-01-02 15:04:05 MST"
+	timeIn := " 14:00:00 " + zona
+	timeOut := " 12:00:00 " + zona
+	checkIn, _ := time.Parse(format, inputReq.CheckIn+timeIn)
+	if inputReq.CheckIn == inputReq.CheckOut {
+		checkIn = time.Now()
+	}
+	checkOut, _ := time.Parse(format, inputReq.CheckOut+timeOut)
 	input := models.Booking{
 		Homestay_ID: inputReq.Homestay_ID,
 		CheckIn:     checkIn,
