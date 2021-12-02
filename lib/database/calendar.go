@@ -3,7 +3,6 @@ package database
 import (
 	"alta/airbnb/config"
 	"alta/airbnb/models"
-	"fmt"
 	"time"
 )
 
@@ -18,22 +17,28 @@ func GetDataBooking(booking_id int) (models.Booking, error) {
 func InsertDateToCalendar(homestay_id int, booking_id int) ([]models.Calendar, error) {
 	bookInfo, _ := GetDataBooking(booking_id)
 	n := bookInfo.LongStay
+	if n <= 0 {
+		n = 1
+	}
 	dateCalendar := make([]models.Calendar, n)
 	now := time.Now()
-	interval := bookInfo.CheckIn.Sub(now)
-	intervalInt := int(interval.Hours() / 24)
-	if now.Hour() >= 12 && interval.Hours() >= 12 {
-		intervalInt = intervalInt + 1
+	intervalOut := int(bookInfo.CheckOut.Sub(now).Hours())
+	// intervalDay := bookInfo.CheckIn.Day() - now.Day()
+	intervalInt := int(bookInfo.CheckIn.Sub(now).Hours()) % 24
+	Day := int(bookInfo.CheckIn.Sub(now).Hours()) / 24
+	if intervalInt >= 14 {
+		Day++
 	}
-	if bookInfo.LongStay == 0 {
+	// Ketika checkin dan checkout di hari yang sama, berlaku untuk yang reservasi subuh
+	if intervalOut <= 12 {
 		dateCalendar[0].Homestay_ID = homestay_id
 		dateCalendar[0].DateIn = time.Now().AddDate(0, 0, -1)
-		dateCalendar[0].DateOut = time.Now()
+		dateCalendar[0].DateOut = bookInfo.CheckOut
 	} else {
 		for i := 0; i < n; i++ {
 			dateCalendar[i].Homestay_ID = homestay_id
-			dateCalendar[i].DateIn = time.Now().AddDate(0, 0, intervalInt+i)
-			dateCalendar[i].DateOut = time.Now().AddDate(0, 0, intervalInt+i+1)
+			dateCalendar[i].DateIn = time.Now().AddDate(0, 0, Day+i)
+			dateCalendar[i].DateOut = time.Now().AddDate(0, 0, Day+i+1)
 		}
 	}
 	if err := config.DB.Create(&dateCalendar).Error; err != nil {
@@ -55,21 +60,27 @@ func CheckDate(homestay_id int, date string) int64 {
 }
 
 func CheckAvailability(request models.BodyCheckIn) int64 {
-	format := "2006-01-02"
 	now := time.Now()
-	checkIn, _ := time.Parse(format, request.CheckIn)
-	checkOut, _ := time.Parse(format, request.CheckOut)
-	longstay := checkOut.Sub(checkIn)
-	interval := checkIn.Sub(now)
-	longstayInt := int(longstay.Hours() / 24)
-	intervalInt := int(interval.Hours() / 24)
-	if now.Hour() >= 12 && interval.Hours() >= 12 {
-		intervalInt = intervalInt + 1
+	zona, _ := now.Zone()
+	format := "2006-01-02 15:04:05 MST"
+	timeIn := " 14:00:00 " + zona
+	timeOut := " 12:00:00 " + zona
+	checkIn, _ := time.Parse(format, request.CheckIn+timeIn)
+	if request.CheckIn == request.CheckOut {
+		checkIn = time.Now()
+	}
+
+	checkOut, _ := time.Parse(format, request.CheckOut+timeOut)
+	longstayInt := int(checkOut.Sub(checkIn).Hours() / 22)
+	// intervalDay := checkIn.Day() - now.Day()
+	intervalInt := int(checkIn.Sub(now).Hours()) % 24
+	Day := int(checkIn.Sub(now).Hours()) / 24
+	if intervalInt >= 14 {
+		Day++
 	}
 	for i := 0; i < longstayInt; i++ {
-		date := time.Now().AddDate(0, 0, intervalInt+i)
-		datef := date.Format(format)
-		fmt.Println("DATEEEEEEEEEEEEEE >>>>>>>>>>>>", date)
+		date := time.Now().AddDate(0, 0, Day+i)
+		datef := date.Format("2006-01-02")
 		if row := CheckDate(request.Homestay_ID, datef); row > 0 {
 			return row
 		}
