@@ -53,7 +53,8 @@ func New() *echo.Echo {
 	// HOMESTAY BOOKING
 	// ------------------------------------------------------------------
 	r.POST("/reservations", controllers.CreateBookingController)
-	r.GET("/reservations", controllers.GetBookingControllers)
+	r.GET("/reservations", controllers.GetAllBookingHistoriesControllers)
+	r.GET("/reservations/:id", controllers.GetBookingControllers)
 	r.DELETE("/reservations/:id", controllers.CancelBookingController)
 	e.POST("/reservations/check", controllers.ReservationCheckController)
 	// ------------------------------------------------------------------
