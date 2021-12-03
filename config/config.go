@@ -44,6 +44,7 @@ func InitDB() {
 func InitalMigration() {
 	DB.AutoMigrate(&models.Users{})
 	DB.AutoMigrate(&models.Homestay{})
+	DB.AutoMigrate(&models.Address{})
 	DB.AutoMigrate(&models.Feature{})
 	DB.AutoMigrate(&models.Facility{})
 	DB.AutoMigrate(&models.Payment{})
