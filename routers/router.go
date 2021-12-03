@@ -22,6 +22,7 @@ func New() *echo.Echo {
 			http.MethodPost,
 			http.MethodDelete},
 	}))
+
 	// ------------------------------------------------------------------
 	// LOGIN & REGISTER USER
 	// ------------------------------------------------------------------
@@ -42,6 +43,7 @@ func New() *echo.Echo {
 	e.GET("/homestays", controllers.GetHomeStayController)
 	e.GET("/homestays/type/:type", controllers.GetHomeStayFilterTypeController)
 	e.GET("/homestays/feature/:type", controllers.GetHomeStayFilterFeatureController)
+	e.GET("/homestays/location/:request", controllers.GetHomeStayFilterLocationController)
 	e.GET("/homestays/:id", controllers.GetHomeStayDetailController)
 	r.GET("/homestays/my", controllers.GetMyHomestayController)
 	r.POST("/homestays", controllers.CreateHomestayController)
@@ -59,6 +61,12 @@ func New() *echo.Echo {
 	// ------------------------------------------------------------------
 	r.POST("/feature", controllers.InsertFeatureController)
 	r.GET("/feature/:id", controllers.GetFeatureController)
+	// ------------------------------------------------------------------
+	// UPLOAD
+	// ------------------------------------------------------------------
+	// r.GET("/upload", Form)
+	// r.POST("/upload", controllers.UploadFileToS3)
+	// r.GET("/image", controllers.DisplayImage)
 
 	return e
 }
