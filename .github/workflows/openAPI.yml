@@ -1,28 +1,1091 @@
-# openapi: '3.0.2'
-# info:
-#   title: Airbnb
-#   description: Alta Project 
-#   license:
-#     name: Apache 2.0
-#     url: https://www.apache.org/licenses/LICENSE-2.0.html
-#   version: '1.0'
-# servers:
-#   - description: SwaggerHub API Auto Mocking
-#     url: https://virtserver.swaggerhub.com/Nathannov24/Airbnb/1.0
-#     variables:
-#       environment: 
-#         default: dev
-#         enum:
-#           - "prod"
-#           - "dev"
-# tags:
-#   - name : Auth
-#     description: Authentication
-#   - name : Users
-#     description: User control
-# paths:
-#   /test:
-#     get:
-#       responses:
-#         '200':
-#           description: OK
+openapi: '3.0.2'
+info:
+  title: Airbnb
+  description: Alta Project 
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: '1.0'
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Nathannov24/Airbnb/1.0
+
+tags:
+  - name : Auth
+    description: Authentication
+  - name : Users
+  - name : Reservations
+  - name : Feature
+  - name : Homestay
+paths:
+####################################
+#   AUTHENTICATION
+####################################
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Get access to account user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestLogin'
+            examples:
+              userData1:
+                description: "Example data user"
+                value: {
+                  email: "alta@alterra.id",
+                  password: "inipassword"
+                }
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: success
+                  value: {
+                    id: 1,
+                    message: "Success Login",
+                    name: "a",
+                    status: "success",
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2MzgzMjYxODAsInVzZXJJZCI6MSwidXNlcm5hbWUiOiJhZG1pbiJ9.AebFR-oQjUSOMez2ucDWkiMrS2eQIPmcYm5c71qZ_co"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: Email & Password Doesn't Match
+                  value: {
+                    code: 400,
+                    status: "failed",
+                    message: "Login Failed. Email and Password incorrect."
+                  }
+  ####################################
+  #   USER
+  #################################### 
+  /register:
+    post:
+      tags:
+        - Users
+      summary: Create Account User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestRegister'
+            examples:
+              userData1:
+                description: "Example data user"
+                value: {
+                  name: "a",
+                  email: "alta@alterra.id",
+                  password: "inipassword",
+                  phonenumber: "082131208",
+                  gender: "male"
+                }
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: success
+                  value: {
+                    message: "Success Create New User",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: Email Has Been Used
+                  value: {
+                    message: "Email was used, try another email",
+                    status: "failed"
+                  }
+  /users/:id:
+    get:
+      tags:
+        - Users
+      summary: Get Profile User
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestGetUserByID'
+              examples:
+                userData1:
+                  description: "Example data user"
+                  value: {
+                    data: {
+                      name: "a",
+                      email: "alta@alterra.id",
+                      phonenumber: "12312312",
+                      gender: "male"
+                    },
+                    message: "success get user",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: Different ID
+                  value: {
+                    message: "Unauthorized Access",
+                    status: "Unauthorized"
+                  }
+    put:
+      tags:
+        - Users
+      summary: Update Account User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestRegister'
+            examples:
+              userData1:
+                description: "Example data user"
+                value: {
+                  name: "a",
+                  email: "alta@alterra.id",
+                  password: "inipasswordyangdiubah",
+                  phonenumber: "082131208",
+                  gender: "male"
+                }
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: success
+                  value: {
+                    message: "Success update user",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: Different ID
+                  value: {
+                    message: "Unauthorized Access",
+                    status: "Unauthorized"
+                  }
+    delete:
+      tags:
+        - Users
+      summary: Get Profile User
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data user"
+                  value: {
+                    message: "success delete user",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: Different ID
+                  value: {
+                    message: "Unauthorized Access",
+                    status: "Unauthorized"
+                  }
+####################################
+#   HOMESTAYS
+####################################
+  /homestays:
+    post:
+      tags:
+        - Homestay
+      summary: Post a Homestays to Database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestPostHomestays'
+            examples:
+              userData1:
+                description: "Example data Homestay"
+                value: {
+                  name: "Vida view Apartment",
+                  type: "apartment",
+                  description: "Apartement who build for fun",
+                  facility: [1,2,3,4],
+                  price: "270000",
+                  address: "Jl. Topaz Raya, Masale, Kec. Panakkukang, Kota Makassar, Sulawesi Selatan 90231"
+                }
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: response success 1
+                  value: {
+                    message: "Success create new homestay",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "data is already exist",
+                    status: "failed"
+                  }
+    get:
+      tags:
+        - Homestay
+      summary: Get All Homestays available in Database
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data homestay"
+                  value: {
+                    data: [
+                      {
+                        ID: 1,
+                        name: "Red Doorz",
+                        type: "hotel",
+                        description: "ini description red doorz",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      },
+                      {
+                        ID: 2,
+                        name: "Villa Bogor , Tapi Boong",
+                        type: "villa",
+                        description: "ini description tapi boong",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      }
+                    ],
+                    message: "success get homestays",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get homestays",
+                    status: "failed"
+                  }
+  /homestays/my:
+    get:
+      tags:
+        - Homestay
+      summary: Get all Homestays who user post
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data homestay"
+                  value: {
+                    data: [
+                      {
+                        ID: 1,
+                        name: "Red Doorz",
+                        type: "hotel",
+                        description: "ini description red doorz",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      },
+                      {
+                        ID: 2,
+                        name: "Villa Bogor , Tapi Boong",
+                        type: "villa",
+                        description: "ini description boongan",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      }
+                    ],
+                    message: "success get homestays",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get homestays",
+                    status: "failed"
+                  }
+  /homestays/type/:type:
+    get:
+      tags:
+        - Homestay
+      summary: Get Homestays by type
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data homestay"
+                  value: {
+                    data: [
+                      {
+                        ID: 1,
+                        name: "Red Doorz",
+                        type: "hotel",
+                        description: "ini description red doorz",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      },
+                      {
+                        ID: 3,
+                        name: "Red Doorz Bekasi",
+                        type: "hotel",
+                        description: "ini description red doorz",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      }
+                    ],
+                    message: "success get homestays",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get homestays",
+                    status: "failed"
+                  }
+  /homestays/feature/:feature:
+    get:
+      tags:
+        - Homestay
+      summary: Get Homestays by feature
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data Homestay"
+                  value: {
+                    data: [
+                      {
+                        ID: 1,
+                        name: "Red Doorz",
+                        type: "hotel",
+                        description: "ini description red doorz",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      },
+                      {
+                        ID: 3,
+                        name: "Red Doorz Bekasi",
+                        type: "hotel",
+                        description: "ini description red doorz",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                      }
+                    ],
+                    message: "success get homestays",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get homestays",
+                    status: "failed"
+                  }
+  /homestays/location/:location:
+    get:
+      tags:
+        - Homestay
+      summary: Get Homestays by Location
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: success
+                  value: {
+                    data: {
+                        ID: 8,
+                        name: "Gold Coast PIK Sea View Apartments by LongeStay 3",
+                        type: "apartement",
+                        description: "ini description ya",
+                        price: 270000,
+                        address: "Jl. Pantai Indah Utara 2, RT.8/RW.1, Kamal Muara, Kec. Penjaringan, Kota Jkt Utara, Daerah Khusus Ibukota Jakarta 14470",
+                        latitude: -6.1091774,
+                        longitude: 106.7403209,
+                      },
+                    message: "success get homestays",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get homestays",
+                    status: "failed"
+                  }
+  /homestays/:id:
+    get:
+      tags:
+        - Homestay
+      summary: Get Homestays by ID
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data homestay"
+                  value: {
+                    data: {
+                        ID: 1,
+                        name: "Red Doorz",
+                        type: "hotel",
+                        description: "ini description red doorz",
+                        price: 100000,
+                        address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                        latitude: -6.276356,
+                        longitude: 107.062538,
+                        features: [
+                          "wifi", "pool", "wc"
+                        ]
+                      },
+                    message: "success get homestays",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get homestays",
+                    status: "failed"
+                  }
+    put:
+      tags:
+        - Homestay
+      summary: Update Homestay
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestHomestayLatLangUpdate'
+            examples:
+              userData1:
+                description: "Example data homestay"
+                value: {
+                  name: "Red Doorz Edited",
+                  type: "hotel",
+                  description: "ini description red doorz (EDITED)",
+                  price: 150000,
+                  address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
+                  latitude: -6.276356,
+                  longitude: 107.062538,
+                }
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: success
+                  value: {
+                    message: "Success edit homestay",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: missin jwt (token)
+                  value: {
+                    message: "missing or malformed jwt"
+                  }
+    delete:
+      tags:
+        - Homestay
+      summary: Delete Homestay By ID
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: success
+                  value: {
+                    message: "success delete homestay",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "Unauthorized Access",
+                    status: "Unauthorized"
+                  }
+  
+####################################
+#   RESERVATIONS
+####################################
+  /reservations:
+    post:
+      tags:
+        - Reservations
+      summary: Create Reservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestBooking'
+            examples:
+              userData1:
+                description: "Example data Reservation"
+                value: {
+                  homestayid: 1,
+                  checkin: "2021-12-07",
+                  checkout: "2021-12-08",
+                  payment: {
+                    type: "Credit Card",
+                    name: "Alghazali Kalla",
+                    cvv: 123,
+                    month: "12",
+                    year: "25",
+                    number: "0123-4567-8901-2345",
+                  }
+                }
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: success
+                  value: {
+                    message: "Success to Reserve",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "Failed to Reserve",
+                    status: "failed"
+                  }
+    get:
+      tags:
+        - Reservations
+      summary: Get List Reservations History
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data reservation"
+                  value: {
+                    data: [
+                      {
+                        ID: 1,
+                        name: "red doorz",
+                        checkin: "2021-12-03",
+                        checkout: "2021-12-04",
+                        Long_Stay: "1",
+                        price: 100000,
+                        total_price: 100000,
+                      },
+                    ],
+                    "message": "success",
+                    "status": "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get reservations",
+                    status: "failed"
+                  }
+  /reservations/check:
+    post:
+      tags:
+        - Reservations
+      summary: Check Available Room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestCheckReserve'
+            examples:
+              userData1:
+                description: "Example data Reservation"
+                value: {
+                  homestayid: 1,
+                  checkin: "2021-12-30",
+                  checkout: "2021-12-31",
+                }
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: Available
+                  value: {
+                    message: "Available, please book now",
+                    status: "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: Not Available
+                  value: {
+                    message: "Not Available",
+                    status: "failed"
+                  }
+  /reservations/:id:
+    get:
+      tags:
+        - Reservations
+      summary: Get Reservations Detail By ID
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data reservation"
+                  value: {
+                    data: [
+                      {
+                        ID: 1,
+                        User_Id: 1,
+                        name: "red doorz",
+                        checkin: "2021-12-03",
+                        checkout: "2021-12-04",
+                        Long_Stay: "1",
+                        total_price: 100000,
+                        status_payment: "not paided",
+                      },
+                    ],
+                    "message": "success",
+                    "status": "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get reservations",
+                    status: "failed"
+                  }
+####################################
+#   FEATURE
+####################################
+  /feature:
+    post:
+      tags:
+        - Feature
+      summary: Input Feature
+      requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestFeature'
+              examples:
+                userData1:
+                  description: "Example data Feature"
+                  value: {
+                    featurename: "tv",
+                  }
+      responses:
+          '200':
+            description: Success Response
+            content:
+              application/json:
+                examples:
+                  responseData1:
+                    description: success input
+                    value: {
+                      message: "Success to input features",
+                      status: "success"
+                    }
+          '400':
+            description: Failed Response
+            content:
+              application/json:
+                examples:
+                  responseData1:
+                    description: duplicate name feature
+                    value: {
+                      message: "feature was inputed, try another feature",
+                      status: "failed"
+                    } 
+  /feature/:id:
+    get:
+      tags:
+        - Feature
+      summary: Get Feature
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              examples:
+                userData1:
+                  description: "Example data feature"
+                  value: {
+                    data: [
+                      {
+                        ID: 1,
+                        featurename: "wifi",
+                        created_at: "2021-12-04",
+                        updated_at: "2021-12-04",
+                        deleted_at: null,
+                      },
+                    ],
+                    "message": "success",
+                    "status": "success"
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              examples:
+                responseData1:
+                  description: failed
+                  value: {
+                    message: "failed get feature",
+                    status: "failed"
+                  }                    
+
+####################################
+#   COMPONENTS
+####################################
+components:
+  ####################################
+  #   JWT
+  ####################################
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "use Token"
+  ####################################
+  #   SCHEMAS
+  ####################################
+  schemas:
+    requestLogin:
+      type: object
+      properties:
+        "email":
+          type: string
+          minLength: 1
+        "password":
+          type: string
+          minLength: 1
+    requestUserData:
+      type: object
+      properties:
+        "name":
+          type: string
+          minLength: 1
+        "email":
+          type: string
+          minLength: 1
+        "password":
+          type: string
+          minLength: 1
+        "phonenumber":
+          type: string
+          minLength: 1
+        "gender":
+          type: string
+          minLength: 1
+    responseUserData:
+      type: object
+      properties:
+        "id":
+          type: number
+          minLength: 1
+        "name":
+          type: string
+          minLength: 1
+        "email":
+          type: string
+          minLength: 1
+        "phonenumber":
+          type: string
+          minLength: 1
+        "gender":
+          type: string
+          minLength: 1
+    successGetSingleUserResponse:
+      type: object
+      properties: {
+        "code":{
+          type: number
+        },
+        "message": {
+          type: string
+        },
+        "status": {
+          type: string
+        },
+        "data": {
+          type: object
+        }
+      }
+    successGetAllUserResponse:
+      type: object
+      properties: {
+        "code":{
+          type: number
+        },
+        "message": {
+          type: string
+        },
+        "status": {
+          type: string
+        },
+        "data": {
+          type: array,
+          items: {
+            type: object
+          }
+        }
+      }
+    requestRegister:
+      type: object
+      properties: {
+        "name":{
+          type: string
+        },
+        "email":{
+          type: string
+        },
+        "password":{
+          type: string
+        },
+        "phonenumber":{
+          type: string
+        },
+        "gender":{
+          type: string
+        },
+      }
+
+    requestGetUserByID:
+      type: object
+      properties: {
+        "data": {
+          type: array,
+          items: {
+            type: object
+          },
+        },
+        "message":{
+          type: string
+        },
+        "status":{
+          type: string
+        }
+      }
+
+    requestPostHomestays:
+      type: object
+      properties: {
+        "name":{
+          type: string
+        },
+        "type":{
+          type: string
+        },
+        "description":{
+          type: string
+        },
+        "facility":{
+          type: array,
+          items: {
+            type: object
+          },
+        },
+        "price":{
+          type: integer
+        },
+        "address":{
+          type: string
+        }
+      }
+    requestHomestayLatLang:
+      type: object
+      properties: {
+        "data": {
+          type: array,
+          items: {
+            type: object
+          },
+        },
+        "message":{
+          type: string
+        },
+        "status":{
+          type: string
+        }
+      }
+    requestHomestayLatLangUpdate:
+      type: object
+      properties: {
+        "data": {
+          type: array,
+          items: {
+            type: object
+          },
+        }
+      }
+    requestBooking:
+      type: object
+      properties: {
+        "homestayid": {
+          type: integer,
+          minLength: 1
+        },
+        "checkin": {
+          type: string
+        },
+        "checkout": {
+          type: string
+        },
+        "payment": {
+          type: array,
+          items: {
+            type: object
+          },
+        }
+      }
+    requestCheckReserve:
+      type: object
+      properties: {
+        "homestayid": {
+          type: integer,
+          minLength: 1
+        },
+        "checkin": {
+          type: string
+        },
+        "checkout": {
+          type: string
+        }
+      }
+    requestFeature:
+      type: object
+      properties:
+        "featurename":
+          type: string
+      
+        
