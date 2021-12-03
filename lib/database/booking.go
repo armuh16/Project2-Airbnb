@@ -27,8 +27,10 @@ func AddHargaToReservation(idHomestay, idBooking int) {
 
 // Fungsi untuk mendapatkan reservasi by reservasi id
 func GetReservation(id int) (interface{}, error) {
-	var booking models.Booking
-	tx := config.DB.Where("id = ?", id).Find(&booking)
+	var booking models.BookingDetailRespon
+	tx := config.DB.Table("bookings").Select("*, homestays.name").
+		Joins("join homestays on homestays.id = bookings.homestay_id").
+		Where("bookings.id = ?", id).Find(&booking)
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return nil, tx.Error
 	}
@@ -43,6 +45,20 @@ func GetReservationOwner(id int) (int, error) {
 		return 0, tx.Error
 	}
 	return booking.User_ID, nil
+}
+
+// Fungsi untuk mendapatkan semua reservasi owner
+func GetAllReservationOwner(user_id int) ([]models.BookingRespon, error) {
+	var book []models.BookingRespon
+	tx := config.DB.Table("bookings").
+		Select(
+			"bookings.id, bookings.check_in, bookings.check_out, bookings.total_price, bookings.long_stay, homestays.name, homestays.price").
+		Joins("join homestays on homestays.id = bookings.homestay_id").
+		Where("bookings.user_id=?", user_id).Find(&book)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return nil, tx.Error
+	}
+	return book, nil
 }
 
 // Fungsi untuk menghapus reservasi by reservasi id
