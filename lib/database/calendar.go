@@ -36,6 +36,7 @@ func InsertDateToCalendar(homestay_id int, booking_id int) ([]models.Calendar, e
 		dateCalendar[0].DateOut = bookInfo.CheckOut
 	} else {
 		for i := 0; i < n; i++ {
+			dateCalendar[i].Booking_ID = booking_id
 			dateCalendar[i].Homestay_ID = homestay_id
 			dateCalendar[i].DateIn = time.Now().AddDate(0, 0, Day+i)
 			dateCalendar[i].DateOut = time.Now().AddDate(0, 0, Day+i+1)

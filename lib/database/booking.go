@@ -54,7 +54,7 @@ func GetAllReservationOwner(user_id int) ([]models.BookingRespon, error) {
 		Select(
 			"bookings.id, bookings.check_in, bookings.check_out, bookings.total_price, bookings.long_stay, homestays.name, homestays.price").
 		Joins("join homestays on homestays.id = bookings.homestay_id").
-		Where("bookings.user_id=?", user_id).Find(&book)
+		Where("bookings.user_id=? and bookings.deleted_at IS NULL", user_id).Find(&book)
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return nil, tx.Error
 	}
@@ -64,18 +64,11 @@ func GetAllReservationOwner(user_id int) ([]models.BookingRespon, error) {
 // Fungsi untuk menghapus reservasi by reservasi id
 func CancelReservation(id int) (interface{}, error) {
 	var booking models.Booking
+	var calendar models.Calendar
+	config.DB.Where("booking_id = ?", id).Delete(&calendar)
+	config.DB.Model(&models.Booking{}).Where("id=?", id).Update("status_payment", "cancelled")
 	if err := config.DB.Where("id = ?", id).Delete(&booking).Error; err != nil {
 		return nil, err
 	}
 	return "deleted", nil
-}
-
-// Fungsi untuk mendapatkan tanggal check_in dan check_out suatu reservasi
-func RoomReservationList(id int) ([]models.ReservationDate, error) {
-	var dates []models.ReservationDate
-	tx := config.DB.Table("bookings").Select("bookings.check_in, bookings.check_out").Where("bookings.homestay_id = ?", int(id)).Find(&dates)
-	if tx.Error != nil || tx.RowsAffected < 1 {
-		return nil, tx.Error
-	}
-	return dates, nil
 }
