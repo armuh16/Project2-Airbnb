@@ -18,7 +18,9 @@ type Homestay struct {
 	Longitude   float64 `gorm:"not null" json:"longitude" form:"longitude"`
 	User_ID     int
 	Facilities  []Facility `gorm:"foreignKey:Homestay_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Bookings    []Booking  `gorm:"foreignKey:Homestay_ID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Calendars   []Calendar `gorm:"foreignKey:Homestay_ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Maps        Address    `gorm:"foreignKey:Homestay_ID"`
 	// Features     []*Feature `gorm:"many2many:feature_homestays;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	CreatedAt time.Time
 	UpdatedAt time.Time

@@ -42,6 +42,7 @@ func New() *echo.Echo {
 	e.GET("/homestays", controllers.GetHomeStayController)
 	e.GET("/homestays/type/:type", controllers.GetHomeStayFilterTypeController)
 	e.GET("/homestays/feature/:type", controllers.GetHomeStayFilterFeatureController)
+	e.GET("/homestays/location/:request", controllers.GetHomeStayFilterLocationController)
 	e.GET("/homestays/:id", controllers.GetHomeStayDetailController)
 	r.GET("/homestays/my", controllers.GetMyHomestayController)
 	r.POST("/homestays", controllers.CreateHomestayController)
@@ -51,7 +52,8 @@ func New() *echo.Echo {
 	// HOMESTAY BOOKING
 	// ------------------------------------------------------------------
 	r.POST("/reservations", controllers.CreateBookingController)
-	r.GET("/reservations", controllers.GetBookingControllers)
+	r.GET("/reservations", controllers.GetAllBookingHistoriesControllers)
+	r.GET("/reservations/:id", controllers.GetBookingControllers)
 	r.DELETE("/reservations/:id", controllers.CancelBookingController)
 	e.POST("/reservations/check", controllers.ReservationCheckController)
 	// ------------------------------------------------------------------

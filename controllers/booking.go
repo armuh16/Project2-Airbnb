@@ -14,8 +14,13 @@ import (
 
 // Controller untuk memasukkan barang baru ke Booking
 func CreateBookingController(c echo.Context) error {
-	inputReq := models.BodyCheckIn{}
-	c.Bind(&inputReq)
+	inputReservation := models.PostReservation{}
+	c.Bind(&inputReservation)
+	inputReq := models.BodyCheckIn{
+		Homestay_ID: inputReservation.Homestay_ID,
+		CheckIn:     inputReservation.CheckIn,
+		CheckOut:    inputReservation.CheckOut,
+	}
 	respon := database.CheckAvailability(inputReq)
 	if respon > 0 {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("The request date is already booked"))
@@ -44,6 +49,7 @@ func CreateBookingController(c echo.Context) error {
 	database.AddLongstay(checkIn, checkOut, book.ID)
 	database.AddHargaToReservation(input.Homestay_ID, book.ID)
 	database.InsertDateToCalendar(book.Homestay_ID, book.ID)
+	database.InsertPayment(book.ID, inputReservation.Payment)
 	return c.JSON(http.StatusOK, responses.SuccessBook())
 }
 
@@ -62,6 +68,16 @@ func GetBookingControllers(c echo.Context) error {
 	}
 	booking, _ := database.GetReservation(id)
 	return c.JSON(http.StatusOK, responses.StatusSuccessData("success", booking))
+}
+
+// Get ALL Trip Bookings Histories
+func GetAllBookingHistoriesControllers(c echo.Context) error {
+	user_id := middlewares.ExtractTokenUserId(c)
+	book, err := database.GetAllReservationOwner(user_id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+	}
+	return c.JSON(http.StatusOK, responses.StatusSuccessData("success", book))
 }
 
 func CancelBookingController(c echo.Context) error {

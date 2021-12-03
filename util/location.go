@@ -7,7 +7,7 @@ import (
 )
 
 // function untuk generate latitude, longitude menggunakan api geocode (google)
-func GetGeocodeLocations(fulladdress string) (float64, float64, error) {
+func GetGeocodeLocations(fulladdress string) ([]geocoder.Address, float64, float64, error) {
 	env := config.GetConfig()
 	apikey := env["APIKEYS"]
 	geocoder.ApiKey = apikey
@@ -16,10 +16,14 @@ func GetGeocodeLocations(fulladdress string) (float64, float64, error) {
 	address.City = fulladdress
 	location, err := geocoder.Geocoding(address)
 	if err != nil {
-		return 0, 0, err
+		return nil, 0, 0, err
 	} else {
 		lng = location.Latitude
 		lat = location.Longitude
 	}
-	return lng, lat, nil
+	alamats, e := geocoder.GeocodingReverse(location)
+	if e != nil {
+		return nil, 0, 0, err
+	}
+	return alamats, lng, lat, nil
 }

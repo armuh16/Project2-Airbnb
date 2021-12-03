@@ -4,10 +4,14 @@ import (
 	"alta/airbnb/config"
 	"alta/airbnb/models"
 	"alta/airbnb/util"
+	"fmt"
 	"strconv"
 	"unicode"
 )
 
+//---------------------------------------------
+//>>>>>>>>>> FITURE CREATE HOMESTAY <<<<<<<<<<<
+//---------------------------------------------
 func InsertHomestay(homestay models.Homestay, user_id int) (*models.Homestay, error) {
 	homestay.User_ID = user_id
 	tx := config.DB.Where("name=? AND user_id=?", homestay.Name, user_id).Find(&models.Homestay{})
@@ -36,6 +40,10 @@ func InsertFasilities(feature_id []int, homestay_id int) (*models.Facility, erro
 	return nil, nil
 }
 
+//---------------------------------------------
+//>>>>>>>>>> FITURE GET HOMESTAY <<<<<<<<<<<<<
+//---------------------------------------------
+// GET Homestay Detail By Id
 func GetHomeStayDetail(homestay_id int) (*models.HomeStayResponDetail, error) {
 	homestay := models.Homestay{}
 	tx := config.DB.Find(&homestay, homestay_id)
@@ -68,6 +76,7 @@ func GetHomeStayDetail(homestay_id int) (*models.HomeStayResponDetail, error) {
 	return &homedetail, nil
 }
 
+// Get All Homestay Filtered by Type
 func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
@@ -79,6 +88,7 @@ func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 	return homestay, nil
 }
 
+// Get All Feature by Facility Id
 func GetFeatureIdByFacility(facilities string) (*models.Feature, error) {
 	isdigit := unicode.IsDigit(rune(facilities[0]))
 	var digit int
@@ -92,6 +102,7 @@ func GetFeatureIdByFacility(facilities string) (*models.Feature, error) {
 	return &feature, nil
 }
 
+// Get All Homestay Filtered by Facilities
 func GetHomeStayByFacility(facilities string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	home, e := GetFeatureIdByFacility(facilities)
@@ -107,6 +118,8 @@ func GetHomeStayByFacility(facilities string) ([]models.HomeStayRespon, error) {
 	}
 	return homestay, nil
 }
+
+// Get All My Homestay
 func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
@@ -118,6 +131,7 @@ func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 	return homestay, nil
 }
 
+// Get All Homestay
 func GetAllHomeStay() ([]models.HomeStayRespon, error) {
 	homestays := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
@@ -129,13 +143,30 @@ func GetAllHomeStay() ([]models.HomeStayRespon, error) {
 	return homestays, nil
 }
 
+// Get All Homestay Filtered by Location
+func GetHomeStayByLocation(location string) ([]models.HomeStayRespon, error) {
+	homestay := []models.HomeStayRespon{}
+	fmt.Println("LOKASI", location)
+	tx := config.DB.Table("addresses").Select(
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		Joins("left join homestays on addresses.homestay_id = homestays.id").
+		Where("addresses.county LIKE ?", "%"+location+"%").Find(&homestay)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return homestay, nil
+}
+
+//---------------------------------------------
+//>>>>>>>>>> FITURE EDIT HOMESTAY <<<<<<<<<<<<<
+//---------------------------------------------
 func EditHomestay(homerequest *models.HomeStayRespon, id int, user_id int) (*models.Homestay, error) {
 	homestay := models.Homestay{}
 	tx := config.DB.Where("user_id=?", user_id).Find(&homestay, id)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	lat, lng, e := util.GetGeocodeLocations(homestay.Address)
+	_, lat, lng, e := util.GetGeocodeLocations(homestay.Address)
 	if e != nil {
 		return nil, e
 	}
@@ -155,6 +186,9 @@ func EditHomestay(homerequest *models.HomeStayRespon, id int, user_id int) (*mod
 	return nil, nil
 }
 
+//---------------------------------------------
+//>>>>>>>>>> FITURE DELETE HOMESTAY <<<<<<<<<<<
+//---------------------------------------------
 func DeleteHomestay(id int, user_id int) (*models.Homestay, error) {
 	tx := config.DB.Where("id=? and user_id=?", id, user_id).Delete(&models.Homestay{})
 	if tx.Error != nil {
