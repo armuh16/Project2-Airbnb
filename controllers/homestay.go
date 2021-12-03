@@ -18,7 +18,7 @@ func CreateHomestayController(c echo.Context) error {
 	if err := c.Bind(&newHomestay); err != nil {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("status bad request"))
 	}
-	lat, lng, e := util.GetGeocodeLocations(newHomestay.Address)
+	addresses, lat, lng, e := util.GetGeocodeLocations(newHomestay.Address)
 	if e != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusFailed("cannot generate the address"))
 	}
@@ -41,6 +41,9 @@ func CreateHomestayController(c echo.Context) error {
 		if _, err := database.InsertFasilities(newHomestay.Facility, respon.ID); err != nil {
 			return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 		}
+	}
+	if _, err := database.InsertAddress(respon.ID, addresses); err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 	}
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success create new homestay"))
 }
@@ -74,6 +77,15 @@ func GetHomeStayFilterTypeController(c echo.Context) error {
 func GetHomeStayFilterFeatureController(c echo.Context) error {
 	request := c.Param("type")
 	homestays, err := database.GetHomeStayByFacility(request)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+	}
+	return c.JSON(http.StatusOK, responses.StatusSuccessData("success get homestay", homestays))
+}
+
+func GetHomeStayFilterLocationController(c echo.Context) error {
+	request := c.Param("request")
+	homestays, err := database.GetHomeStayByLocation(request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 	}

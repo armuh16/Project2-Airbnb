@@ -30,6 +30,7 @@ func New() *echo.Echo {
 	e.GET("/homestays", controllers.GetHomeStayController)
 	e.GET("/homestays/type/:type", controllers.GetHomeStayFilterTypeController)
 	e.GET("/homestays/feature/:type", controllers.GetHomeStayFilterFeatureController)
+	e.GET("/homestays/location/:request", controllers.GetHomeStayFilterLocationController)
 	e.GET("/homestays/:id", controllers.GetHomeStayDetailController)
 	r.GET("/homestays/my", controllers.GetMyHomestayController)
 	r.POST("/homestays", controllers.CreateHomestayController)
