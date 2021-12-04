@@ -21,7 +21,7 @@ func CreateBookingController(c echo.Context) error {
 		CheckIn:     inputReservation.CheckIn,
 		CheckOut:    inputReservation.CheckOut,
 	}
-	respon := database.CheckAvailability(inputReq)
+	respon, _, _ := database.CheckAvailability(inputReq)
 	if respon > 0 {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("The request date is already booked"))
 	}
