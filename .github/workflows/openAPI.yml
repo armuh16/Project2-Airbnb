@@ -734,6 +734,8 @@ paths:
                   description: Available
                   value: {
                     message: "Available, please book now",
+                    long_stays: 30,
+                    total_price: 621000,
                     status: "success"
                   }
         '400':
