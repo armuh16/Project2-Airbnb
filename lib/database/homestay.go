@@ -139,7 +139,7 @@ func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 func GetAllHomeStay() ([]models.HomeStayRespon, error) {
 	homestays := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Where("homestays.deleted_at IS NULL").Find(&homestays)
 	if tx.Error != nil {
 		return nil, tx.Error
