@@ -3,13 +3,26 @@ package routers
 import (
 	"alta/airbnb/constants"
 	"alta/airbnb/controllers"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	echoMid "github.com/labstack/echo/v4/middleware"
 )
 
 func New() *echo.Echo {
 	e := echo.New()
+
+	//CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodPut,
+			http.MethodPost,
+			http.MethodDelete},
+	}))
+
 	// ------------------------------------------------------------------
 	// LOGIN & REGISTER USER
 	// ------------------------------------------------------------------
@@ -49,6 +62,12 @@ func New() *echo.Echo {
 	// ------------------------------------------------------------------
 	r.POST("/feature", controllers.InsertFeatureController)
 	r.GET("/feature/:id", controllers.GetFeatureController)
+	// ------------------------------------------------------------------
+	// UPLOAD
+	// ------------------------------------------------------------------
+	// r.GET("/upload", Form)
+	r.POST("/upload", controllers.UploadController)
+	// r.GET("/image", controllers.DisplayImage)
 
 	return e
 }

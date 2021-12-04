@@ -3,6 +3,7 @@
 [![Go.Dev reference](https://img.shields.io/badge/gorm-reference-blue?logo=go&logoColor=blue)](https://pkg.go.dev/gorm.io/gorm?tab=doc)
 [![Go.Dev reference](https://img.shields.io/badge/echo-reference-blue?logo=go&logoColor=blue)](https://github.com/labstack/echo)
 
+<br>
 
 # Table of Content
 
@@ -10,14 +11,18 @@
 - [Requirements](#Requirements)
 - [How to use](#how-to-use)
 - [Our Feature](#Our-Feature)
-- [Structuring](#Structuring)
 - [Endpoints](#endpoints)
 - [Credits](#credits)
+
+<br>
 
 
 # Description
 
 Project Base task Alterra Academy ini dibuat untuk mengimplementasikan SCRUM method using GO Language STRUCTURING , ECHO , JWT , API. 
+
+<br>
+
 
 # Requirements
 
@@ -25,14 +30,18 @@ Project Base task Alterra Academy ini dibuat untuk mengimplementasikan SCRUM met
 * Postman
 * Mysql Workbench
 
+
+<br>
+
+
 # How to use
 - Install Go, Postman, MySQL Workbench
 - Clone this repository in your $PATH:
 ```
 https://github.com/armuh16/Project2-Airbnb.git
 ```
-* CREATE DATABASE IF NOT EXISTS `project1_kelompok3`;
-* USE `project1_kelompok3`;
+* CREATE DATABASE IF NOT EXISTS `alta_airbnb`;
+* USE `alta_airbnb`;
 * Run `main.go`
 ```
 $ go run main.go
@@ -40,59 +49,16 @@ $ go run main.go
 * Open Postman run with your local host, follow the routes in Visual Studio Code folder.
 
 
+<br>
+
 # Our Feature
-* CREATE : User, 
-* READ : User, 
-* UPDATE User, 
-* DELETE : User, 
+* CREATE : User, Homestays, Reservations
+* READ : User, Homestays, Reservations
+* UPDATE User, Homestays
+* DELETE : User, Homestays, Reservations
 
-
-# Structuring
-```
-📦project1_kelompok3
- ┣ 📂.vscode
- ┃   ┗ 📜settings.json
- ┣ 📂config
- ┃   ┗ 📜config.go
- ┣ 📂constants
- ┃   ┗ 📜constant.go
- ┣ 📂controllers
- ┃   ┗ 📜orderController.go
- ┃   ┗ 📜productController.go
- ┃   ┗ 📜productController_test.go
- ┃   ┗ 📜shoppingCartController.go
- ┃   ┗ 📜shoppingCartController_test.go
- ┃   ┗ 📜userController.go
- ┣ 📂lib
- ┃   ┗ 📂database
- ┃     ┗ 📜order.go
- ┃     ┗ 📜product.go
- ┃     ┗ 📜shoppingCart.go
- ┃     ┗ 📜user.go
- ┃   ┗ 📂response
- ┃     ┗ 📜response.go
- ┣ 📂middlewares
- ┃   ┗ 📜logMiddleware.go
- ┃   ┗ 📜middlewares.go
- ┣ 📂models
- ┃   ┗ 📜address.go
- ┃   ┗ 📜order_detail.go
- ┃   ┗ 📜orders.go
- ┃   ┗ 📜payment_methods.go
- ┃   ┗ 📜products.go
- ┃   ┗ 📜shopping_carts.go
- ┃   ┗ 📜users.go
- ┣ 📂routes
- ┃   ┗ 📜route.go
- ┣ 📜.env
- ┣ 📜.gitignore
- ┣ 📜cover.out
- ┣ 📜go.mod
- ┣ 📜go.sum
- ┣ 📜main.go
- ┣ 📜profile.cov
- ┗ 📜README.MD
-```
+<br>
+<br>
 
 # Endpoints
 
@@ -105,24 +71,21 @@ $ go run main.go
 | PUT | /users/:id | Update user profile | Yes | Yes
 | DELETE | /users/:id | Delete user profile | Yes | Yes
 |---|---|---|---|---|
-| POST   | /products | Add products | Yes | Yes
-| GET   | /products | Get products list | No | No
-| GET   | /products/:id | Get products by id product | No | No
-| GET   | /products/users | Get products by userid | Yes | Yes
-| PUT | /products/:id | Update products by id products | Yes | Yes
-| DELETE   | /products/:id | Delete products by id products | Yes | Yes
+| POST   | /homestays | Add homestays | Yes | Yes
+| GET   | /homestays | Get homestays | No | No
+| GET   | /homestays/:id | Get homestays by id homestays | No | No
+| GET   | /homestays/type/:type | Get homestays by type feature filter | No | No
+| GET   | /homestays/feature/:type | Get homestays by ex. wifi, pool, ac | No | No
+| GET   | /homestays/my | Get homestays own homestay (own hosting) | Yes | Yes
+| PUT | /homestays/:id | Update homestays by id homestays | Yes | Yes
+| DELETE   | /homestays/:id | Delete homestays by id homestays | Yes | Yes
 |---|---|---|---|---|
-| GET | /shopping_carts | Get list of all shopping carts | Yes | Yes
-| POST | /shopping_carts | Add shopping carts | Yes | Yes
-| PUT | /shopping_carts/:id | Update shopping carts by id products | Yes | Yes
-| DELETE | /shopping_carts/:id | Delete shopping_cart by id products | Yes | Yes
+| GET | /reservations | Get list of all reservations | Yes | Yes
+| POST | /reservations | Add reservations | Yes | Yes
+| POST | /reservations/check | Check reservations avail | No | No
+| DELETE | /reservations/:id | Delete reservations by id reservations | Yes | Yes
 |---|---|---|---|---|
-| POST | /orders | Add orders | Yes | Yes
-| POST | /orders | Add deatil orders | Yes | Yes
-| GET | /orders | Get list of all orders| Yes | Yes
-| GET | /history | Get list of all history| Yes | Yes
-| GET | /cancel | Get list of all cancel| Yes | Yes
-|---|---|---|---|---|
+
 
 <br>
 
