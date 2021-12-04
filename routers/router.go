@@ -66,7 +66,7 @@ func New() *echo.Echo {
 	// UPLOAD
 	// ------------------------------------------------------------------
 	// r.GET("/upload", Form)
-	// r.POST("/upload", controllers.UploadFileToS3)
+	r.POST("/upload", controllers.UploadController)
 	// r.GET("/image", controllers.DisplayImage)
 
 	return e
