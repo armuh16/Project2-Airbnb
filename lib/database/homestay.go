@@ -67,6 +67,10 @@ func GetHomeStayDetail(homestay_id int) (*models.HomeStayResponDetail, error) {
 		Name:        homestay.Name,
 		Type:        homestay.Type,
 		Description: homestay.Description,
+		Guests:      homestay.Guests,
+		Beds:        homestay.Beds,
+		Bedrooms:    homestay.Bedrooms,
+		Bathrooms:   homestay.Bathrooms,
 		Price:       homestay.Price,
 		Address:     homestay.Address,
 		Latitude:    homestay.Latitude,
@@ -80,7 +84,7 @@ func GetHomeStayDetail(homestay_id int) (*models.HomeStayResponDetail, error) {
 func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Where("homestays.deleted_at IS NULL and type=?", tipe).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -111,7 +115,7 @@ func GetHomeStayByFacility(facilities string) ([]models.HomeStayRespon, error) {
 	}
 
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").Joins(
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").Joins(
 		"join facilities on facilities.homestay_id = homestays.id").Where("facilities.deleted_at IS NULL and feature_id=?", home.ID).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -123,7 +127,7 @@ func GetHomeStayByFacility(facilities string) ([]models.HomeStayRespon, error) {
 func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Where("homestays.deleted_at IS NULL and user_id=?", user_id).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
