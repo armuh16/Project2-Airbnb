@@ -49,6 +49,17 @@ func StatusSuccess(message string) map[string]interface{} {
 	return result
 }
 
+// Fungsi untuk memberikan respon ketika controller berhasil dijalankan
+func StatusSuccessAvail(message string, longstay int64, price int64) map[string]interface{} {
+	var result = map[string]interface{}{
+		"status":     "success",
+		"message":    message,
+		"longstay":   longstay,
+		"totalprice": price,
+	}
+	return result
+}
+
 // Fungsi untuk memberikan respon ketika controller berhasil dijalankan dan menerima masukan data
 func StatusSuccessData(message string, data interface{}) map[string]interface{} {
 	var result = map[string]interface{}{

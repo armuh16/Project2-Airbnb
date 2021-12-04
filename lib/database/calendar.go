@@ -60,7 +60,13 @@ func CheckDate(homestay_id int, date string) int64 {
 	return 0
 }
 
-func CheckAvailability(request models.BodyCheckIn) int64 {
+func GetHomestaysPrice(homestays_id int) int64 {
+	homestay := models.Homestay{}
+	config.DB.Find(&homestay, homestays_id)
+	return int64(homestay.Price)
+}
+
+func CheckAvailability(request models.BodyCheckIn) (int64, int64, int64) {
 	now := time.Now()
 	zona, _ := now.Zone()
 	format := "2006-01-02 15:04:05 MST"
@@ -79,12 +85,14 @@ func CheckAvailability(request models.BodyCheckIn) int64 {
 	if intervalInt >= 14 {
 		Day++
 	}
+	price := GetHomestaysPrice(request.Homestay_ID)
+	totalprice := longstayInt * int(price)
 	for i := 0; i < longstayInt; i++ {
 		date := time.Now().AddDate(0, 0, Day+i)
 		datef := date.Format("2006-01-02")
 		if row := CheckDate(request.Homestay_ID, datef); row > 0 {
-			return row
+			return row, 0, 0
 		}
 	}
-	return 0
+	return 0, int64(longstayInt), int64(totalprice)
 }

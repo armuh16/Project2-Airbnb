@@ -12,9 +12,9 @@ import (
 func ReservationCheckController(c echo.Context) error {
 	reqDate := models.BodyCheckIn{}
 	c.Bind(&reqDate)
-	respon := database.CheckAvailability(reqDate)
-	if respon > 0 {
+	book, longstay, totalprice := database.CheckAvailability(reqDate)
+	if book > 0 {
 		return c.JSON(http.StatusOK, responses.StatusSuccess("Not Available"))
 	}
-	return c.JSON(http.StatusOK, responses.StatusSuccess("Available, please book now"))
+	return c.JSON(http.StatusOK, responses.StatusSuccessAvail("Available, please book now", longstay, totalprice))
 }
