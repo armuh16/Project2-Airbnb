@@ -22,6 +22,7 @@ func New() *echo.Echo {
 			http.MethodPost,
 			http.MethodDelete},
 	}))
+
 	// ------------------------------------------------------------------
 	// LOGIN & REGISTER USER
 	// ------------------------------------------------------------------
@@ -61,6 +62,12 @@ func New() *echo.Echo {
 	// ------------------------------------------------------------------
 	r.POST("/feature", controllers.InsertFeatureController)
 	r.GET("/feature/:id", controllers.GetFeatureController)
+	// ------------------------------------------------------------------
+	// UPLOAD
+	// ------------------------------------------------------------------
+	// r.GET("/upload", Form)
+	r.POST("/upload", controllers.UploadController)
+	// r.GET("/image", controllers.DisplayImage)
 
 	return e
 }

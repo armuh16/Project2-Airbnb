@@ -11,6 +11,10 @@ type Homestay struct {
 	Name        string  `gorm:"type:varchar(255);not null" json:"name" form:"name"`
 	Type        string  `gorm:"type:varchar(100);not null" json:"type" form:"type"`
 	Description string  `gorm:"type:varchar(255);not null" json:"description" form:"description"`
+	Guests      int     `gorm:"type:int;not null" json:"guests" form:"guests"`
+	Beds        int     `gorm:"type:int;not null" json:"beds" form:"beds"`
+	Bedrooms    int     `gorm:"type:int;not null" json:"bedrooms" form:"bedrooms"`
+	Bathrooms   int     `gorm:"type:int;not null" json:"bathrooms" form:"bathrooms"`
 	Status      string  `gorm:"type:varchar(255);default:'available';not null" json:"status" form:"status"`
 	Price       int     `gorm:"type:int;not null" json:"price" form:"price"`
 	Address     string  `gorm:"type:varchar(255);not null" json:"address" form:"address"`
@@ -31,6 +35,10 @@ type PostHomestayRequest struct {
 	Name        string `json:"name" form:"name"`
 	Type        string `json:"type" form:"type"`
 	Description string `json:"description" form:"description"`
+	Guests      int    `gorm:"type:int;not null" json:"guests" form:"guests"`
+	Beds        int    `gorm:"type:int;not null" json:"beds" form:"beds"`
+	Bedrooms    int    `gorm:"type:int;not null" json:"bedrooms" form:"bedrooms"`
+	Bathrooms   int    `gorm:"type:int;not null" json:"bathrooms" form:"bathrooms"`
 	Facility    []int  `json:"facility" form:"facility"`
 	Price       int    `json:"price" form:"price"`
 	Address     string `json:"address" form:"address"`
@@ -41,6 +49,10 @@ type HomeStayResponDetail struct {
 	Name        string
 	Type        string
 	Description string
+	Guests      int
+	Beds        int
+	Bedrooms    int
+	Bathrooms   int
 	Price       int
 	Address     string
 	Latitude    float64
@@ -52,6 +64,10 @@ type HomeStayRespon struct {
 	Name        string
 	Type        string
 	Description string
+	Guests      int
+	Beds        int
+	Bedrooms    int
+	Bathrooms   int
 	Price       int
 	Address     string
 	Latitude    float64
