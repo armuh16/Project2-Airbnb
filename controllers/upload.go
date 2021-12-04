@@ -1,5 +1,6 @@
 package controllers
 
+/*
 import (
 	responses "alta/airbnb/lib/response"
 	"log"
@@ -76,7 +77,7 @@ func UploadController(c echo.Context) error {
 	return c.JSON(http.StatusOK, responses.StatusSuccessData("filepath", filepath))
 }
 
-/*
+
 var uploader *s3manager.Uploader
 
 func NewUploader() *s3manager.Uploader {
