@@ -100,7 +100,7 @@ func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
 		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
-		Where("homestays.deleted_at IS NULL and type=?", tipe).Find(&homestay)
+		Where("homestays.deleted_at IS NULL and type LIKE ?", "%"+tipe+"%").Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -167,7 +167,7 @@ func GetHomeStayByLocation(location string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	fmt.Println("LOKASI", location)
 	tx := config.DB.Table("addresses").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Joins("left join homestays on addresses.homestay_id = homestays.id").
 		Where("addresses.county LIKE ?", "%"+location+"%").Find(&homestay)
 	if tx.Error != nil {
