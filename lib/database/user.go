@@ -10,13 +10,14 @@ import (
 
 var user models.Users
 
-func GetUser(userId int) (*models.Users, error) {
-	tx := config.DB.Find(&user, userId)
+func GetUser(userID int) (*models.Users, error) {
+	var userid models.Users
+	tx := config.DB.Find(&userid, userID)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 	if tx.RowsAffected > 0 {
-		return &user, nil
+		return &userid, nil
 	}
 	return nil, nil
 }
