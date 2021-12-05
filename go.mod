@@ -3,7 +3,7 @@ module alta/airbnb
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.42.18 // indirect
+	github.com/aws/aws-sdk-go v1.42.19 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.11.2 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.7.4 // indirect
