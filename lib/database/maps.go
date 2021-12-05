@@ -23,3 +23,19 @@ func InsertAddress(homestay_id int, address []geocoder.Address) (*models.Address
 	}
 	return &maps, nil
 }
+
+// Edit Address in Maps Table
+func EditAddress(homestay_id int, addressRequest []geocoder.Address) (*models.Address, error) {
+	maps := models.Address{
+		Street:     addressRequest[2].Street,
+		City:       addressRequest[2].City,
+		County:     addressRequest[2].County,
+		State:      addressRequest[2].State,
+		Country:    addressRequest[2].Country,
+		PostalCode: addressRequest[2].PostalCode,
+	}
+	if err := config.DB.Model(&models.Address{}).Where("homestay_id=?", homestay_id).Updates(maps).Error; err != nil {
+		return nil, err
+	}
+	return &maps, nil
+}
