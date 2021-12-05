@@ -10,11 +10,15 @@ import (
 
 var user models.Users
 
-func GetUser(id int) (models.Users, error) {
-	if err := config.DB.Find(&user, id).Error; err != nil {
-		return models.Users{}, err
+func GetUser(userId int) (*models.Users, error) {
+	tx := config.DB.Find(&user, userId)
+	if tx.Error != nil {
+		return nil, tx.Error
 	}
-	return user, nil
+	if tx.RowsAffected > 0 {
+		return &user, nil
+	}
+	return nil, nil
 }
 
 func GetUserByEmail(email string) (int64, error) {
