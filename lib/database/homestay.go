@@ -179,7 +179,7 @@ func GetHomeStayByLocation(location string) ([]models.HomeStayRespon, error) {
 		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude, photos.url").
 		Joins("left join homestays on addresses.homestay_id = homestays.id").
 		Joins("join photos on photos.homestay_id = homestays.id").
-		Where("addresses.county LIKE ?", "%"+location+"%").Find(&homestay)
+		Where("addresses.county LIKE ? OR addresses.state LIKE ?", "%"+location+"%", "%"+location+"%").Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
