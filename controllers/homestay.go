@@ -6,10 +6,22 @@ import (
 	"alta/airbnb/middlewares"
 	"alta/airbnb/models"
 	"alta/airbnb/util"
+	"fmt"
+	"io"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
+	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/api/option"
+	"google.golang.org/appengine"
+)
+
+var (
+	storageClient *storage.Client
 )
 
 func CreateHomestayController(c echo.Context) error {
@@ -18,6 +30,53 @@ func CreateHomestayController(c echo.Context) error {
 	if err := c.Bind(&newHomestay); err != nil {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("status bad request"))
 	}
+
+	bucket := "alta_airbnb"
+	var err error
+
+	ctx := appengine.NewContext(c.Request())
+	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile("credential.json"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": err.Error(),
+			"error":   true,
+		})
+	}
+
+	f, uploaded_file, err := c.Request().FormFile("file")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": err.Error(),
+			"error":   true,
+		})
+	}
+	defer f.Close()
+
+	ext := strings.Split(uploaded_file.Filename, ".")
+	extension := ext[len(ext)-1]
+	photoname := string(uploaded_file.Filename)
+	t := time.Now()
+	formatted := fmt.Sprintf("%d%02d%02dT%02d:%02d:%02d",
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), t.Minute(), t.Second())
+	homestay_name := strings.ReplaceAll(newHomestay.Name, " ", "+")
+	uploaded_file.Filename = fmt.Sprintf("%v-%v.%v", homestay_name, formatted, extension)
+	sw := storageClient.Bucket(bucket).Object(uploaded_file.Filename).NewWriter(ctx)
+	if _, err := io.Copy(sw, f); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": err.Error(),
+			"error":   true,
+		})
+	}
+
+	if err := sw.Close(); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": err.Error(),
+			"error":   true,
+		})
+	}
+
+	u, err := url.Parse("https://storage.googleapis.com/" + bucket + "/" + sw.Attrs().Name)
 	addresses, lat, lng, e := util.GetGeocodeLocations(newHomestay.Address)
 	if e != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusFailed("cannot generate the address"))
@@ -43,6 +102,14 @@ func CreateHomestayController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, responses.StatusFailed("data is already exist"))
 	} else {
 		if _, err := database.InsertFasilities(newHomestay.Facility, respon.ID); err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+		}
+		photo := models.Photo{
+			Homestay_ID: respon.ID,
+			Photo_Name:  photoname,
+			Url:         fmt.Sprintf("%v", u),
+		}
+		if _, err := database.InsertPhoto(&photo); err != nil {
 			return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 		}
 	}
