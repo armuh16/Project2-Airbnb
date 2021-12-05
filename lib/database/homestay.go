@@ -5,8 +5,8 @@ import (
 	"alta/airbnb/models"
 	"alta/airbnb/util"
 	"fmt"
-	"strconv"
-	"unicode"
+
+	"github.com/kelvins/geocoder"
 )
 
 //---------------------------------------------
@@ -29,6 +29,21 @@ func InsertHomestay(homestay models.Homestay, user_id int) (*models.Homestay, er
 }
 
 func InsertFasilities(feature_id []int, homestay_id int) (*models.Facility, error) {
+	facility := make([]models.Facility, len(feature_id))
+	for i := 0; i < len(feature_id); i++ {
+		facility[i].Feature_ID = feature_id[i]
+		facility[i].Homestay_ID = homestay_id
+	}
+	if err := config.DB.Create(&facility).Error; err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func EditFacilities(feature_id []int, homestay_id int) (*models.Facility, error) {
+	if err := config.DB.Unscoped().Where("homestay_id=?", homestay_id).Delete(&models.Facility{}).Error; err != nil {
+		return nil, err
+	}
 	facility := make([]models.Facility, len(feature_id))
 	for i := 0; i < len(feature_id); i++ {
 		facility[i].Feature_ID = feature_id[i]
@@ -94,13 +109,13 @@ func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 
 // Get All Feature by Facility Id
 func GetFeatureIdByFacility(facilities string) (*models.Feature, error) {
-	isdigit := unicode.IsDigit(rune(facilities[0]))
-	var digit int
-	if isdigit {
-		digit, _ = strconv.Atoi(facilities)
-	}
+	// isdigit := unicode.IsDigit(rune(facilities[0]))
+	// var digit int
+	// if isdigit {
+	// 	digit, _ = strconv.Atoi(facilities)
+	// }
 	feature := models.Feature{}
-	if err := config.DB.Where("feature_name=? or id=?", facilities, digit).Find(&feature).Error; err != nil {
+	if err := config.DB.Where("feature_name LIKE ?", "%"+facilities+"%").Find(&feature).Error; err != nil {
 		return nil, err
 	}
 	return &feature, nil
@@ -164,30 +179,36 @@ func GetHomeStayByLocation(location string) ([]models.HomeStayRespon, error) {
 //---------------------------------------------
 //>>>>>>>>>> FITURE EDIT HOMESTAY <<<<<<<<<<<<<
 //---------------------------------------------
-func EditHomestay(homerequest *models.HomeStayRespon, id int, user_id int) (*models.Homestay, error) {
+func EditHomestay(homeRequest *models.PostHomestayRequest, id int, user_id int) (*models.Homestay, []geocoder.Address, error) {
 	homestay := models.Homestay{}
-	tx := config.DB.Where("user_id=?", user_id).Find(&homestay, id)
+	tx := config.DB.Where("user_id=? and id=?", user_id, id).Find(&homestay)
 	if tx.Error != nil {
-		return nil, tx.Error
+		return nil, nil, tx.Error
 	}
-	_, lat, lng, e := util.GetGeocodeLocations(homestay.Address)
+	addresses, lat, lng, e := util.GetGeocodeLocations(homeRequest.Address)
 	if e != nil {
-		return nil, e
+		return nil, nil, e
 	}
-	homestay.Name = homerequest.Name
-	homestay.Type = homerequest.Type
-	homestay.Description = homerequest.Description
-	homestay.Price = homerequest.Price
+	homestay.Name = homeRequest.Name
+	homestay.Type = homeRequest.Type
+	homestay.Description = homeRequest.Description
+	homestay.Guests = homeRequest.Guests
+	homestay.Beds = homeRequest.Beds
+	homestay.Bedrooms = homeRequest.Bedrooms
+	homestay.Bathrooms = homeRequest.Bathrooms
+	homestay.Price = homeRequest.Price
+	homestay.Address = homeRequest.Address
 	homestay.Latitude = lat
 	homestay.Longitude = lng
+
 	if tx.RowsAffected > 0 {
 		if err := config.DB.Save(&homestay).Error; err != nil {
-			return nil, err
+			return nil, nil, err
 		} else {
-			return &homestay, nil
+			return &homestay, addresses, nil
 		}
 	}
-	return nil, nil
+	return nil, nil, nil
 }
 
 //---------------------------------------------

@@ -116,17 +116,24 @@ func UpdateHomeStayController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadGateway, responses.StatusFailed("invalid method"))
 	}
-	homeRequest := models.HomeStayRespon{}
+	homeRequest := models.PostHomestayRequest{}
 	user_id := middlewares.ExtractTokenUserId(c)
 	if err := c.Bind(&homeRequest); err != nil {
 		return c.JSON(http.StatusBadGateway, responses.StatusFailed("bad request"))
 	}
-	respon, err := database.EditHomestay(&homeRequest, id, user_id)
+	respon, addresses, err := database.EditHomestay(&homeRequest, id, user_id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 	}
 	if respon == nil {
 		return c.JSON(http.StatusNotFound, responses.StatusFailed("data not found"))
+	} else {
+		if _, err := database.EditFacilities(homeRequest.Facility, respon.ID); err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+		}
+	}
+	if _, err := database.EditAddress(respon.ID, addresses); err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 	}
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success edit homestay"))
 }
