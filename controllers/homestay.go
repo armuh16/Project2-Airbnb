@@ -37,18 +37,12 @@ func CreateHomestayController(c echo.Context) error {
 	ctx := appengine.NewContext(c.Request())
 	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile("credential.json"))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": err.Error(),
-			"error":   true,
-		})
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
 	}
 
 	f, uploaded_file, err := c.Request().FormFile("file")
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": err.Error(),
-			"error":   true,
-		})
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
 	}
 	defer f.Close()
 
@@ -63,17 +57,11 @@ func CreateHomestayController(c echo.Context) error {
 	uploaded_file.Filename = fmt.Sprintf("%v-%v.%v", homestay_name, formatted, extension)
 	sw := storageClient.Bucket(bucket).Object(uploaded_file.Filename).NewWriter(ctx)
 	if _, err := io.Copy(sw, f); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": err.Error(),
-			"error":   true,
-		})
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
 	}
 
 	if err := sw.Close(); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": err.Error(),
-			"error":   true,
-		})
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
 	}
 
 	u, err := url.Parse("https://storage.googleapis.com/" + bucket + "/" + sw.Attrs().Name)
@@ -179,15 +167,50 @@ func GetHomeStayDetailController(c echo.Context) error {
 }
 
 func UpdateHomeStayController(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	id, e := strconv.Atoi(c.Param("id"))
+	if e != nil {
 		return c.JSON(http.StatusBadGateway, responses.StatusFailed("invalid method"))
 	}
-	homeRequest := models.PostHomestayRequest{}
+	homeRequest := models.EditHomestayRequest{}
 	user_id := middlewares.ExtractTokenUserId(c)
 	if err := c.Bind(&homeRequest); err != nil {
 		return c.JSON(http.StatusBadGateway, responses.StatusFailed("bad request"))
 	}
+	bucket := "alta_airbnb"
+	var err error
+
+	ctx := appengine.NewContext(c.Request())
+	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile("credential.json"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
+	}
+
+	f, uploaded_file, err := c.Request().FormFile("file")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
+	}
+	defer f.Close()
+
+	ext := strings.Split(uploaded_file.Filename, ".")
+	extension := ext[len(ext)-1]
+	photoname := string(uploaded_file.Filename)
+	t := time.Now()
+	formatted := fmt.Sprintf("%d%02d%02dT%02d:%02d:%02d",
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), t.Minute(), t.Second())
+	homestay_name := strings.ReplaceAll(homeRequest.Name, " ", "+")
+	uploaded_file.Filename = fmt.Sprintf("%v-%v.%v", homestay_name, formatted, extension)
+	sw := storageClient.Bucket(bucket).Object(uploaded_file.Filename).NewWriter(ctx)
+	if _, err := io.Copy(sw, f); err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
+	}
+
+	if err := sw.Close(); err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
+	}
+
+	u, err := url.Parse("https://storage.googleapis.com/" + bucket + "/" + sw.Attrs().Name)
+
 	respon, addresses, err := database.EditHomestay(&homeRequest, id, user_id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
@@ -198,10 +221,19 @@ func UpdateHomeStayController(c echo.Context) error {
 		if _, err := database.EditFacilities(homeRequest.Facility, respon.ID); err != nil {
 			return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 		}
+		photo := models.Photo{
+			Homestay_ID: respon.ID,
+			Photo_Name:  photoname,
+			Url:         fmt.Sprintf("%v", u),
+		}
+		if _, err := database.EditPhoto(&photo); err != nil {
+			return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
+		}
 	}
 	if _, err := database.EditAddress(respon.ID, addresses); err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
 	}
+
 	return c.JSON(http.StatusOK, responses.StatusSuccess("success edit homestay"))
 }
 
