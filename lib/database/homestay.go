@@ -73,6 +73,9 @@ func GetHomeStayDetail(homestay_id int) (*models.HomeStayResponDetail, error) {
 		"features.feature_name").Joins("join features on features.id = facilities.feature_id").
 		Where("facilities.deleted_at IS NULL and homestay_id=?", homestay_id).Find(&fasilitas)
 
+	photo := models.Photo{}
+	config.DB.Where("homestay_id=?", homestay.ID).Find(&photo)
+	url := photo.Url
 	features := make([]string, len(fasilitas))
 	for i := 0; i < len(fasilitas); i++ {
 		features[i] = fasilitas[i].Feature_name
@@ -90,6 +93,7 @@ func GetHomeStayDetail(homestay_id int) (*models.HomeStayResponDetail, error) {
 		Address:     homestay.Address,
 		Latitude:    homestay.Latitude,
 		Longitude:   homestay.Longitude,
+		Url:         url,
 	}
 	homedetail.Features = features
 	return &homedetail, nil
@@ -99,7 +103,8 @@ func GetHomeStayDetail(homestay_id int) (*models.HomeStayResponDetail, error) {
 func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude, photos.url").
+		Joins("join photos on photos.homestay_id = homestays.id").
 		Where("homestays.deleted_at IS NULL and type LIKE ?", "%"+tipe+"%").Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -130,8 +135,10 @@ func GetHomeStayByFacility(facilities string) ([]models.HomeStayRespon, error) {
 	}
 
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").Joins(
-		"join facilities on facilities.homestay_id = homestays.id").Where("facilities.deleted_at IS NULL and feature_id=?", home.ID).Find(&homestay)
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude, photos.url").Joins(
+		"join facilities on facilities.homestay_id = homestays.id").
+		Joins("join photos on photos.homestay_id = homestays.id").
+		Where("facilities.deleted_at IS NULL and feature_id=?", home.ID).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -142,7 +149,8 @@ func GetHomeStayByFacility(facilities string) ([]models.HomeStayRespon, error) {
 func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude, photos.url").
+		Joins("join photos on photos.homestay_id = homestays.id").
 		Where("homestays.deleted_at IS NULL and user_id=?", user_id).Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -154,7 +162,8 @@ func GetMyHometay(user_id int) ([]models.HomeStayRespon, error) {
 func GetAllHomeStay() ([]models.HomeStayRespon, error) {
 	homestays := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude, photos.url").
+		Joins("join photos on photos.homestay_id = homestays.id").
 		Where("homestays.deleted_at IS NULL").Find(&homestays)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -167,8 +176,9 @@ func GetHomeStayByLocation(location string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	fmt.Println("LOKASI", location)
 	tx := config.DB.Table("addresses").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude, photos.url").
 		Joins("left join homestays on addresses.homestay_id = homestays.id").
+		Joins("join photos on photos.homestay_id = homestays.id").
 		Where("addresses.county LIKE ?", "%"+location+"%").Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
