@@ -13,6 +13,17 @@ func InsertPhoto(Photo *models.Photo) (*models.Photo, error) {
 	return Photo, nil
 }
 
+func EditPhoto(Photo *models.Photo) (*models.Photo, error) {
+	photo := models.Photo{}
+	if err := config.DB.Where("homestay_id=?", Photo.Homestay_ID).Find(&photo).Error; err != nil {
+		return nil, err
+	}
+	if err := config.DB.Model(&photo).Updates(Photo).Error; err != nil {
+		return nil, err
+	}
+	return Photo, nil
+}
+
 // func InsertPhoto(photo *models.Photo) (interface{}, error) {
 // 	if err := config.DB.Create(&photo).Error; err != nil {
 // 		return nil, err

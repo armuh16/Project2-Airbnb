@@ -46,6 +46,20 @@ type PostHomestayRequest struct {
 	File        string `json:"file" form:"file"`
 }
 
+type EditHomestayRequest struct {
+	Name        string `json:"name" form:"name"`
+	Type        string `json:"type" form:"type"`
+	Description string `json:"description" form:"description"`
+	Guests      int    `gorm:"type:int;not null" json:"guests" form:"guests"`
+	Beds        int    `gorm:"type:int;not null" json:"beds" form:"beds"`
+	Bedrooms    int    `gorm:"type:int;not null" json:"bedrooms" form:"bedrooms"`
+	Bathrooms   int    `gorm:"type:int;not null" json:"bathrooms" form:"bathrooms"`
+	Facility    []int  `json:"facility" form:"facility"`
+	Price       int    `json:"price" form:"price"`
+	Address     string `json:"address" form:"address"`
+	File        string `json:"file" form:"file"`
+}
+
 type HomeStayResponDetail struct {
 	ID          int
 	Name        string

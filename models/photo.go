@@ -8,7 +8,7 @@ import (
 
 type Photo struct {
 	ID          int    `gorm:"primarykey"`
-	Homestay_ID int    `json:"homestay_id" form:"homestay_id"`
+	Homestay_ID int    `gorm:"primarykey" json:"homestay_id" form:"homestay_id"`
 	Photo_Name  string `gorm:"type:varchar(50);not null" json:"photo_name" form:"photo_name"`
 	Url         string `gorm:"type:longtext" json:"url" form:"url"`
 	CreatedAt   time.Time
@@ -19,4 +19,9 @@ type Photo struct {
 type Get_Photo struct {
 	Homestay_ID int
 	Nama_Photo  string
+}
+
+type EditPhoto struct {
+	Photo_Name string
+	Url        string
 }

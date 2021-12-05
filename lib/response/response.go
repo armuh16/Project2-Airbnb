@@ -13,6 +13,15 @@ func StatusFailed(message string) map[string]interface{} {
 	return result
 }
 
+// Fungsi untuk memberikan respon ketika controller gagal dijalankan
+func StatusFailedDataPhoto(data interface{}) map[string]interface{} {
+	var result = map[string]interface{}{
+		"error":   true,
+		"message": data,
+	}
+	return result
+}
+
 // Fungsi untuk memberikan respon ketika Database gagal dijalankan
 func StatusInternalServerError() map[string]interface{} {
 	var result = map[string]interface{}{
