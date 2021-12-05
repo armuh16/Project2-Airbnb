@@ -5,8 +5,6 @@ import (
 	"alta/airbnb/models"
 	"alta/airbnb/util"
 	"fmt"
-	"strconv"
-	"unicode"
 
 	"github.com/kelvins/geocoder"
 )
@@ -43,9 +41,8 @@ func InsertFasilities(feature_id []int, homestay_id int) (*models.Facility, erro
 }
 
 func EditFacilities(feature_id []int, homestay_id int) (*models.Facility, error) {
-	tx := config.DB.Unscoped().Where("homestay_id=?", homestay_id).Delete(&models.Facility{})
-	if tx.Error != nil {
-		return nil, tx.Error
+	if err := config.DB.Unscoped().Where("homestay_id=?", homestay_id).Delete(&models.Facility{}).Error; err != nil {
+		return nil, err
 	}
 	facility := make([]models.Facility, len(feature_id))
 	for i := 0; i < len(feature_id); i++ {
@@ -103,7 +100,7 @@ func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	tx := config.DB.Table("homestays").Select(
 		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
-		Where("homestays.deleted_at IS NULL and type=?", tipe).Find(&homestay)
+		Where("homestays.deleted_at IS NULL and type LIKE ?", "%"+tipe+"%").Find(&homestay)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -112,13 +109,13 @@ func GetHomeStayByType(tipe string) ([]models.HomeStayRespon, error) {
 
 // Get All Feature by Facility Id
 func GetFeatureIdByFacility(facilities string) (*models.Feature, error) {
-	isdigit := unicode.IsDigit(rune(facilities[0]))
-	var digit int
-	if isdigit {
-		digit, _ = strconv.Atoi(facilities)
-	}
+	// isdigit := unicode.IsDigit(rune(facilities[0]))
+	// var digit int
+	// if isdigit {
+	// 	digit, _ = strconv.Atoi(facilities)
+	// }
 	feature := models.Feature{}
-	if err := config.DB.Where("feature_name=? or id=?", facilities, digit).Find(&feature).Error; err != nil {
+	if err := config.DB.Where("feature_name LIKE ?", "%"+facilities+"%").Find(&feature).Error; err != nil {
 		return nil, err
 	}
 	return &feature, nil
@@ -170,7 +167,7 @@ func GetHomeStayByLocation(location string) ([]models.HomeStayRespon, error) {
 	homestay := []models.HomeStayRespon{}
 	fmt.Println("LOKASI", location)
 	tx := config.DB.Table("addresses").Select(
-		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
+		"homestays.id, homestays.name, homestays.type, homestays.description, homestays.guests, homestays.beds, homestays.bedrooms, homestays.bathrooms, homestays.price, homestays.address, homestays.latitude, homestays.longitude").
 		Joins("left join homestays on addresses.homestay_id = homestays.id").
 		Where("addresses.county LIKE ?", "%"+location+"%").Find(&homestay)
 	if tx.Error != nil {
