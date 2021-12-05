@@ -189,9 +189,10 @@ func GetHomeStayByLocation(location string) ([]models.HomeStayRespon, error) {
 //---------------------------------------------
 //>>>>>>>>>> FITURE EDIT HOMESTAY <<<<<<<<<<<<<
 //---------------------------------------------
-func EditHomestay(homeRequest *models.PostHomestayRequest, id int, user_id int) (*models.Homestay, []geocoder.Address, error) {
+func EditHomestay(homeRequest *models.EditHomestayRequest, id int, user_id int) (*models.Homestay, []geocoder.Address, error) {
 	homestay := models.Homestay{}
-	tx := config.DB.Where("user_id=? and id=?", user_id, id).Find(&homestay)
+	home := models.Homestay{}
+	tx := config.DB.Find(&home, id)
 	if tx.Error != nil {
 		return nil, nil, tx.Error
 	}
@@ -199,6 +200,8 @@ func EditHomestay(homeRequest *models.PostHomestayRequest, id int, user_id int) 
 	if e != nil {
 		return nil, nil, e
 	}
+
+	homestay.ID = home.ID
 	homestay.Name = homeRequest.Name
 	homestay.Type = homeRequest.Type
 	homestay.Description = homeRequest.Description
@@ -212,7 +215,7 @@ func EditHomestay(homeRequest *models.PostHomestayRequest, id int, user_id int) 
 	homestay.Longitude = lng
 
 	if tx.RowsAffected > 0 {
-		if err := config.DB.Save(&homestay).Error; err != nil {
+		if err := config.DB.Model(&home).Updates(homestay).Error; err != nil {
 			return nil, nil, err
 		} else {
 			return &homestay, addresses, nil
