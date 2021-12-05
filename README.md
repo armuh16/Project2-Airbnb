@@ -81,6 +81,7 @@ $ go run main.go
 | DELETE   | /homestays/:id | Delete homestays by id homestays | Yes | Yes
 |---|---|---|---|---|
 | GET | /reservations | Get list of all reservations | Yes | Yes
+| GET | /reservations/:id | Get list of id reservations | Yes | Yes
 | POST | /reservations | Add reservations | Yes | Yes
 | POST | /reservations/check | Check reservations avail | No | No
 | DELETE | /reservations/:id | Delete reservations by id reservations | Yes | Yes
