@@ -65,6 +65,9 @@ func CreateHomestayController(c echo.Context) error {
 	}
 
 	u, err := url.Parse("https://storage.googleapis.com/" + bucket + "/" + sw.Attrs().Name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
+	}
 	addresses, lat, lng, e := util.GetGeocodeLocations(newHomestay.Address)
 	if e != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusFailed("cannot generate the address"))
@@ -210,7 +213,9 @@ func UpdateHomeStayController(c echo.Context) error {
 	}
 
 	u, err := url.Parse("https://storage.googleapis.com/" + bucket + "/" + sw.Attrs().Name)
-
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responses.StatusFailedDataPhoto(err.Error()))
+	}
 	respon, addresses, err := database.EditHomestay(&homeRequest, id, user_id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responses.StatusInternalServerError())
