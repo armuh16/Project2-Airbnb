@@ -14,9 +14,9 @@ tags:
   - name : Auth
     description: Authentication
   - name : Users
-  - name : Reservations
   - name : Feature
   - name : Homestay
+  - name : Reservations
 paths:
 ####################################
 #   AUTHENTICATION
@@ -286,6 +286,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       },
                       {
                         ID: 2,
@@ -296,6 +297,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       }
                     ],
                     message: "success get homestays",
@@ -340,6 +342,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       },
                       {
                         ID: 2,
@@ -350,6 +353,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       }
                     ],
                     message: "success get homestays",
@@ -390,6 +394,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       },
                       {
                         ID: 3,
@@ -400,6 +405,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       }
                     ],
                     message: "success get homestays",
@@ -440,6 +446,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       },
                       {
                         ID: 3,
@@ -450,6 +457,7 @@ paths:
                         address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                         latitude: -6.276356,
                         longitude: 107.062538,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       }
                     ],
                     message: "success get homestays",
@@ -489,6 +497,7 @@ paths:
                         address: "Jl. Pantai Indah Utara 2, RT.8/RW.1, Kamal Muara, Kec. Penjaringan, Kota Jkt Utara, Daerah Khusus Ibukota Jakarta 14470",
                         latitude: -6.1091774,
                         longitude: 106.7403209,
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       },
                     message: "success get homestays",
                     status: "success"
@@ -529,7 +538,8 @@ paths:
                         longitude: 107.062538,
                         features: [
                           "wifi", "pool", "wc"
-                        ]
+                        ],
+                        url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                       },
                     message: "success get homestays",
                     status: "success"
@@ -565,6 +575,7 @@ paths:
                   address: "Jl. Kelana No.1, Tambun, Kec. Tambun Sel., Bekasi, Jawa Barat 17510",
                   latitude: -6.276356,
                   longitude: 107.062538,
+                  url: "https://storage.googleapis.com/alta_airbnb/test+image+2-20211205T12:47:56.jpg",
                 }
       responses:
         '200':
