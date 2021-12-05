@@ -10,11 +10,16 @@ import (
 
 var user models.Users
 
-func GetUser(id int) (*models.Users, error) {
-	if err := config.DB.First(&user, id).Error; err != nil {
-		return nil, err
+func GetUser(userID int) (*models.Users, error) {
+	var userid models.Users
+	tx := config.DB.Find(&userid, userID)
+	if tx.Error != nil {
+		return nil, tx.Error
 	}
-	return &user, nil
+	if tx.RowsAffected > 0 {
+		return &userid, nil
+	}
+	return nil, nil
 }
 
 func GetUserByEmail(email string) (int64, error) {
@@ -36,11 +41,11 @@ func RegisterUser(user models.Users) (interface{}, error) {
 }
 
 func DeleteUser(id int) (interface{}, error) {
-	if err := config.DB.Where("id = ?", id).Delete(&user).Error; err != nil {
+	var userid models.Users
+	if err := config.DB.Where("id = ?", id).Delete(&userid).Error; err != nil {
 		return nil, err
 	}
-
-	return user, nil
+	return userid, nil
 }
 
 func UpdateUser(id int, User models.Users) (models.Users, error) {
